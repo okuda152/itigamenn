@@ -1,0 +1,31 @@
+# Unity generated
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+
+# Unity crash reports
+sysinfo.txt
+Crashes/
+
+# Asset meta files should be included
+# *.meta
+
+# Visual Studio / Rider
+.vs/
+.idea/
+*.csproj
+*.sln
+*.suo
+*.user
+*.userprefs
+
+# OS
+.DS_Store
+Thumbs.db
+
+# StreamingAssets の画像（個人ファイル）は除外しない場合はコメントアウト
+# Assets/StreamingAssets/player.png
