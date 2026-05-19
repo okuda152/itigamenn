@@ -7,13 +7,13 @@ public class PlayerHealth : MonoBehaviour
 
     float hp;
     float flashTimer;
-    SkeletalPlayer figure;
+    FrameAnimPlayer figure;
 
     static readonly Color BaseColor = Color.white;
 
     void Awake() => hp = maxHP;
 
-    void Start() => figure = GetComponentInChildren<SkeletalPlayer>();
+    void Start() => figure = GetComponent<FrameAnimPlayer>();
 
     void Update()
     {

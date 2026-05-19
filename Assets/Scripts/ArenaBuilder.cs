@@ -79,15 +79,15 @@ public class ArenaBuilder : MonoBehaviour
         col.size           = new Vector2(0.45f, 1.8f);
         col.sharedMaterial = CreateNoFrictionMaterial();
 
-        var ctrl = player.AddComponent<PlayerController>();
-        var combat = player.AddComponent<PlayerCombat>();
+        player.AddComponent<PlayerController>();
+        player.AddComponent<PlayerCombat>();
         player.AddComponent<PlayerHealth>();
 
-        var figGO = new GameObject("SkeletalPlayer");
-        figGO.transform.SetParent(player.transform);
-        figGO.transform.localPosition = new Vector3(0f, 0.5f, 0f);
-        figGO.transform.localScale    = new Vector3(1.5f, 1.5f, 1f);
-        figGO.AddComponent<SkeletalPlayer>();
+        // フレームアニメ描画 (SpriteRenderer + Animator + FrameAnimPlayer)
+        var sr   = player.AddComponent<SpriteRenderer>();
+        sr.sortingOrder = 5;
+        player.AddComponent<Animator>();
+        player.AddComponent<FrameAnimPlayer>();
     }
 
     // ---- Util ----
