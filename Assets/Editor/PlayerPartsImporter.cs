@@ -33,16 +33,16 @@ public class PlayerPartsImporter : AssetPostprocessor
         if (!Pivots.TryGetValue(key, out Vector2 pivot)) return;
 
         var ti = (TextureImporter)assetImporter;
-        ti.textureType          = TextureImporterType.Sprite;
-        ti.spriteImportMode     = SpriteImportMode.Single;
-        ti.spritePixelsPerUnit  = 100;
-        ti.filterMode           = FilterMode.Point;
-        ti.textureCompression   = TextureImporterCompression.Uncompressed;
-        ti.spriteMeshType       = SpriteMeshType.FullRect;
-        ti.alphaIsTransparency  = true;
+        ti.textureType         = TextureImporterType.Sprite;
+        ti.spriteImportMode    = SpriteImportMode.Single;
+        ti.spritePixelsPerUnit = 100;
+        ti.filterMode          = FilterMode.Point;
+        ti.textureCompression  = TextureImporterCompression.Uncompressed;
+        ti.alphaIsTransparency = true;
 
         var settings = new TextureImporterSettings();
         ti.ReadTextureSettings(settings);
+        settings.spriteMeshType  = SpriteMeshType.FullRect;
         settings.spriteAlignment = (int)SpriteAlignment.Custom;
         settings.spritePivot     = pivot;
         ti.SetTextureSettings(settings);
