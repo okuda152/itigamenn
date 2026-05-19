@@ -13,16 +13,16 @@ public class PlayerPartsImporter : AssetPostprocessor
     // ファイル名（拡張子なし） → Pivot UV座標
     static readonly Dictionary<string, Vector2> Pivots = new()
     {
-        { "01_head",         new Vector2(0.500f, 0.750f) },
-        { "02_torso",        new Vector2(0.500f, 0.734f) },
-        { "03_arm_L_upper",  new Vector2(0.500f, 0.703f) },
-        { "04_arm_L_lower",  new Vector2(0.422f, 0.547f) },
-        { "05_arm_R_upper",  new Vector2(0.500f, 0.703f) },
-        { "06_arm_R_lower",  new Vector2(0.578f, 0.547f) },
-        { "07_leg_L_upper",  new Vector2(0.500f, 0.422f) },
-        { "08_leg_L_lower",  new Vector2(0.453f, 0.234f) },
-        { "09_leg_R_upper",  new Vector2(0.500f, 0.422f) },
-        { "10_leg_R_lower",  new Vector2(0.547f, 0.234f) },
+        { "01_head",         new Vector2(0.500f, 0.766f) },
+        { "02_torso",        new Vector2(0.500f, 0.750f) },
+        { "03_arm_L_upper",  new Vector2(0.500f, 0.734f) },
+        { "04_arm_L_lower",  new Vector2(0.422f, 0.609f) },
+        { "05_arm_R_upper",  new Vector2(0.500f, 0.734f) },
+        { "06_arm_R_lower",  new Vector2(0.578f, 0.609f) },
+        { "07_leg_L_upper",  new Vector2(0.500f, 0.531f) },
+        { "08_leg_L_lower",  new Vector2(0.453f, 0.313f) },
+        { "09_leg_R_upper",  new Vector2(0.500f, 0.531f) },
+        { "10_leg_R_lower",  new Vector2(0.547f, 0.313f) },
     };
 
     void OnPreprocessTexture()

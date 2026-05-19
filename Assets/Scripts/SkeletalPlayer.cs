@@ -19,21 +19,21 @@ public class SkeletalPlayer : MonoBehaviour
 
     void BuildHierarchy()
     {
-        var torso = Make("Torso",      transform,      "02_torso",       0, V(0,     0));
+        var torso = Make("Torso",      transform,       "02_torso",        0, V( 0.00f,  0.00f));
 
-        Make("Head",       torso.transform, "01_head",        1, V(0,     0));
+        Make("Head",       torso.transform, "01_head",         1, V( 0.00f,  0.00f));
 
-        var armLU = Make("ArmL_Upper", torso.transform, "03_arm_L_upper", -1, V( 0.00f, -0.04f));
-        Make("ArmL_Lower", armLU.transform, "04_arm_L_lower", -1, V(-0.10f, -0.20f));
+        var armLU = Make("ArmL_Upper", torso.transform, "03_arm_L_upper", -1, V( 0.00f, -0.02f));
+        Make("ArmL_Lower", armLU.transform, "04_arm_L_lower",  -1, V(-0.10f, -0.16f));
 
-        var armRU = Make("ArmR_Upper", torso.transform, "05_arm_R_upper",  2, V( 0.00f, -0.04f));
-        Make("ArmR_Lower", armRU.transform, "06_arm_R_lower",  2, V( 0.10f, -0.20f));
+        var armRU = Make("ArmR_Upper", torso.transform, "05_arm_R_upper",  2, V( 0.00f, -0.02f));
+        Make("ArmR_Lower", armRU.transform, "06_arm_R_lower",   2, V( 0.10f, -0.16f));
 
-        var legLU = Make("LegL_Upper", torso.transform, "07_leg_L_upper",  1, V( 0.00f, -0.40f));
-        Make("LegL_Lower", legLU.transform, "08_leg_L_lower",  1, V(-0.06f, -0.24f));
+        var legLU = Make("LegL_Upper", torso.transform, "07_leg_L_upper",  1, V( 0.00f, -0.28f));
+        Make("LegL_Lower", legLU.transform, "08_leg_L_lower",   1, V(-0.06f, -0.28f));
 
-        var legRU = Make("LegR_Upper", torso.transform, "09_leg_R_upper",  1, V( 0.00f, -0.40f));
-        Make("LegR_Lower", legRU.transform, "10_leg_R_lower",  1, V( 0.06f, -0.24f));
+        var legRU = Make("LegR_Upper", torso.transform, "09_leg_R_upper",  1, V( 0.00f, -0.28f));
+        Make("LegR_Lower", legRU.transform, "10_leg_R_lower",   1, V( 0.06f, -0.28f));
     }
 
     static Vector3 V(float x, float y) => new Vector3(x, y, 0f);
