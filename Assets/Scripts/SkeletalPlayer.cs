@@ -19,33 +19,24 @@ public class SkeletalPlayer : MonoBehaviour
 
     void BuildHierarchy()
     {
-        // Player (this.gameObject)
-        // └── Torso
-        //     ├── Head
-        //     ├── ArmL_Upper  ← sortingOrder -1 (背面)
-        //     │   └── ArmL_Lower
-        //     ├── ArmR_Upper  ← sortingOrder  2 (前面)
-        //     │   └── ArmR_Lower
-        //     ├── LegL_Upper
-        //     │   └── LegL_Lower
-        //     └── LegR_Upper
-        //         └── LegR_Lower
+        var torso = Make("Torso",      transform,      "02_torso",       0, V(0,     0));
 
-        var torso   = Make("Torso",       transform,       "02_torso",        0);
-        /*         */ Make("Head",        torso.transform, "01_head",          1);
+        Make("Head",       torso.transform, "01_head",        1, V(0,     0));
 
-        var armLU   = Make("ArmL_Upper",  torso.transform, "03_arm_L_upper",  -1);
-        /*         */ Make("ArmL_Lower",  armLU.transform, "04_arm_L_lower",  -1);
+        var armLU = Make("ArmL_Upper", torso.transform, "03_arm_L_upper", -1, V( 0.00f, -0.04f));
+        Make("ArmL_Lower", armLU.transform, "04_arm_L_lower", -1, V(-0.10f, -0.20f));
 
-        var armRU   = Make("ArmR_Upper",  torso.transform, "05_arm_R_upper",   2);
-        /*         */ Make("ArmR_Lower",  armRU.transform, "06_arm_R_lower",   2);
+        var armRU = Make("ArmR_Upper", torso.transform, "05_arm_R_upper",  2, V( 0.00f, -0.04f));
+        Make("ArmR_Lower", armRU.transform, "06_arm_R_lower",  2, V( 0.10f, -0.20f));
 
-        var legLU   = Make("LegL_Upper",  torso.transform, "07_leg_L_upper",   1);
-        /*         */ Make("LegL_Lower",  legLU.transform, "08_leg_L_lower",   1);
+        var legLU = Make("LegL_Upper", torso.transform, "07_leg_L_upper",  1, V( 0.00f, -0.40f));
+        Make("LegL_Lower", legLU.transform, "08_leg_L_lower",  1, V(-0.06f, -0.24f));
 
-        var legRU   = Make("LegR_Upper",  torso.transform, "09_leg_R_upper",   1);
-        /*         */ Make("LegR_Lower",  legRU.transform, "10_leg_R_lower",   1);
+        var legRU = Make("LegR_Upper", torso.transform, "09_leg_R_upper",  1, V( 0.00f, -0.40f));
+        Make("LegR_Lower", legRU.transform, "10_leg_R_lower",  1, V( 0.06f, -0.24f));
     }
+
+    static Vector3 V(float x, float y) => new Vector3(x, y, 0f);
 
     // ---- Idle アニメ (Legacy Animation) ----
 
@@ -87,7 +78,7 @@ public class SkeletalPlayer : MonoBehaviour
     }
 
     /// <summary>GameObject を生成して SpriteRenderer を付ける</summary>
-    static GameObject Make(string goName, Transform parent, string spriteName, int order)
+    static GameObject Make(string goName, Transform parent, string spriteName, int order, Vector3 localPos)
     {
         var sp = Resources.Load<Sprite>(BASE + spriteName);
         if (sp == null)
@@ -95,7 +86,7 @@ public class SkeletalPlayer : MonoBehaviour
 
         var go = new GameObject(goName);
         go.transform.SetParent(parent, false);
-        go.transform.localPosition = Vector3.zero;
+        go.transform.localPosition = localPos;
         go.transform.localScale    = Vector3.one;
         go.transform.localRotation = Quaternion.identity;
 
