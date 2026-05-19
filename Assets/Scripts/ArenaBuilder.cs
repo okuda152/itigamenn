@@ -86,6 +86,7 @@ public class ArenaBuilder : MonoBehaviour
         var figGO = new GameObject("SkeletalPlayer");
         figGO.transform.SetParent(player.transform);
         figGO.transform.localPosition = new Vector3(0f, -0.5f, 0f);
+        figGO.transform.localScale    = new Vector3(2f, 2f, 1f);
         figGO.AddComponent<SkeletalPlayer>();
     }
 
