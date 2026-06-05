@@ -29,7 +29,35 @@ public class BossManager : MonoBehaviour
     // ---- Event handlers ----
 
     void OnDinoDied()     => StartCoroutine(Transition(SpawnButterflyBoss, "N E X T  B O S S"));
-    void OnButterflyDied() { message = "C L E A R !"; showMessage = true; }
+    void OnButterflyDied() => StartCoroutine(ClearSequence());
+
+    IEnumerator ClearSequence()
+    {
+        message     = "C L E A R !";
+        showMessage = true;
+        yield return new WaitForSeconds(3f);
+        ReturnToStart();
+    }
+
+    void ReturnToStart()
+    {
+        foreach (var go in Object.FindObjectsByType<GameObject>(FindObjectsSortMode.None))
+        {
+            if (go.GetComponent<Camera>() != null) continue;
+            Destroy(go);
+        }
+
+        var cam = Camera.main;
+        if (cam != null)
+        {
+            cam.backgroundColor = Color.black;
+            cam.orthographicSize = 5.5f;
+            cam.transform.position = new Vector3(0f, 0f, -10f);
+        }
+
+        new GameObject("EffectManager").AddComponent<EffectManager>();
+        new GameObject("StartScreen").AddComponent<StartScreen>();
+    }
 
     IEnumerator Transition(System.Action spawn, string msg)
     {
