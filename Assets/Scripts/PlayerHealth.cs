@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -7,6 +9,7 @@ public class PlayerHealth : MonoBehaviour
 
     float hp;
     float flashTimer;
+    bool  isDead = false;
     StickFigureRenderer figure;
 
     static readonly Color BaseColor = Color.black;
@@ -24,13 +27,50 @@ public class PlayerHealth : MonoBehaviour
 
     public void TakeDamage(float amount)
     {
+        if (isDead) return;
         hp = Mathf.Max(0f, hp - amount);
         if (figure) { figure.SetColor(new Color(1f, 0.3f, 0.3f)); flashTimer = 0.15f; }
-        if (hp <= 0f) gameObject.SetActive(false);
+        if (hp <= 0f) StartCoroutine(Die());
+    }
+
+    IEnumerator Die()
+    {
+        isDead = true;
+
+        // エフェクト
+        EffectManager.DeathBurst(transform.position, new Color(1f, 0.3f, 0.3f));
+
+        // 入力・ビジュアルを止める
+        var ctrl = GetComponent<PlayerController>();
+        if (ctrl) ctrl.enabled = false;
+        if (figure) figure.gameObject.SetActive(false);
+
+        // 2.5秒後にシーンをリロード → Bootstrap → StartScreen
+        yield return new WaitForSeconds(2.5f);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     void OnGUI()
     {
+        // ---- GAME OVER オーバーレイ ----
+        if (isDead)
+        {
+            GUI.color = new Color(0f, 0f, 0f, 0.65f);
+            GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), Texture2D.whiteTexture);
+
+            var style = new GUIStyle(GUI.skin.label)
+            {
+                fontSize  = 56,
+                fontStyle = FontStyle.Bold,
+                alignment = TextAnchor.MiddleCenter,
+                normal    = { textColor = new Color(1f, 0.15f, 0.15f) }
+            };
+            GUI.color = Color.white;
+            GUI.Label(new Rect(0, 0, Screen.width, Screen.height), "G A M E  O V E R", style);
+            return;
+        }
+
+        // ---- HP バー（既存）----
         const float barH   = 200f;
         const float barW   = 18f;
         const float margin = 24f;
@@ -38,21 +78,17 @@ public class PlayerHealth : MonoBehaviour
         float x = Screen.width  - barW - margin;
         float y = (Screen.height - barH) * 0.5f;
 
-        // 外枠
         GUI.color = new Color(0f, 0f, 0f, 0.55f);
         GUI.DrawTexture(new Rect(x - 4, y - 4, barW + 8, barH + 8), Texture2D.whiteTexture);
 
-        // 空バー
         GUI.color = new Color(0.05f, 0.18f, 0.05f);
         GUI.DrawTexture(new Rect(x, y, barW, barH), Texture2D.whiteTexture);
 
-        // HP（下から上に伸びる）
         float fillH = barH * (hp / maxHP);
         GUI.color = new Color(0.2f, 0.85f, 0.25f);
         GUI.DrawTexture(new Rect(x, y + barH - fillH, barW, fillH), Texture2D.whiteTexture);
 
-        // ラベル
-        var style = new GUIStyle(GUI.skin.label)
+        var labelStyle = new GUIStyle(GUI.skin.label)
         {
             alignment = TextAnchor.MiddleCenter,
             fontStyle  = FontStyle.Bold,
@@ -60,6 +96,6 @@ public class PlayerHealth : MonoBehaviour
             normal     = { textColor = Color.white }
         };
         GUI.color = Color.white;
-        GUI.Label(new Rect(x - 4, y - 22f, barW + 8, 18f), "HP", style);
+        GUI.Label(new Rect(x - 4, y - 22f, barW + 8, 18f), "HP", labelStyle);
     }
 }
