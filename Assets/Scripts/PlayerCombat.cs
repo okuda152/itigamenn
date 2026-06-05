@@ -120,7 +120,11 @@ public class PlayerCombat : MonoBehaviour
 
         float dir = ctrl.FacingRight ? 1f : -1f;
 
-        Vector2 spawn = (Vector2)transform.position + new Vector2(dir * 0.3f, -0.3f);
+        // 手のワールド座標を直接取得（あれば）
+        var fig = GetComponentInChildren<StickFigureRenderer>();
+        Vector2 spawn = fig != null
+            ? (Vector2)fig.ThrowHandWorld + new Vector2(dir * 0.05f, 0f)
+            : (Vector2)transform.position + new Vector2(dir * 0.3f, -0.3f);
 
         Vector2 vel   = new Vector2(dir * throwForceX, throwForceY);
         var     myCol = GetComponent<Collider2D>();
