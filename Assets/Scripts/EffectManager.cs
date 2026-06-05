@@ -13,29 +13,31 @@ public class EffectManager : MonoBehaviour
 
     // ---- Public API ----
 
+    static bool Alive => instance != null;
+
     /// <summary>パンチ・キックのヒットスパーク（放射線）</summary>
     public static void HitSpark(Vector2 pos, Color color)
-        => instance?.StartCoroutine(instance.HitSparkCo(pos, color));
+    { if (Alive) instance.StartCoroutine(instance.HitSparkCo(pos, color)); }
 
     /// <summary>ヒット時に広がる衝撃リング</summary>
     public static void HitRing(Vector2 pos, Color color)
-        => instance?.StartCoroutine(instance.HitRingCo(pos, color));
+    { if (Alive) instance.StartCoroutine(instance.HitRingCo(pos, color)); }
 
     /// <summary>着地ほこり（左右に弧）</summary>
     public static void LandDust(Vector2 pos)
-        => instance?.StartCoroutine(instance.LandDustCo(pos));
+    { if (Alive) instance.StartCoroutine(instance.LandDustCo(pos)); }
 
     /// <summary>突進中の速度線残像（都度呼ぶ）</summary>
     public static void ChargePuff(Vector2 pos, bool facingRight, Color color)
-        => instance?.StartCoroutine(instance.ChargePuffCo(pos, facingRight, color));
+    { if (Alive) instance.StartCoroutine(instance.ChargePuffCo(pos, facingRight, color)); }
 
     /// <summary>溜め中の集中線エフェクト</summary>
     public static void FocusLines(Vector2 pos, float duration)
-        => instance?.StartCoroutine(instance.FocusLinesCo(pos, duration));
+    { if (Alive) instance.StartCoroutine(instance.FocusLinesCo(pos, duration)); }
 
     /// <summary>死亡爆発</summary>
     public static void DeathBurst(Vector2 pos, Color color)
-        => instance?.StartCoroutine(instance.DeathBurstCo(pos, color));
+    { if (Alive) instance.StartCoroutine(instance.DeathBurstCo(pos, color)); }
 
     // ---- ヒットスパーク ----
 
