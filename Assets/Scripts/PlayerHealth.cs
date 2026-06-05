@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using System.Collections;
 
 public class PlayerHealth : MonoBehaviour
@@ -45,9 +44,32 @@ public class PlayerHealth : MonoBehaviour
         if (ctrl) ctrl.enabled = false;
         if (figure) figure.gameObject.SetActive(false);
 
-        // 2.5秒後にシーンをリロード → Bootstrap → StartScreen
+        // 2.5秒後に全オブジェクトを破棄してスタート画面へ
         yield return new WaitForSeconds(2.5f);
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        ReturnToStart();
+    }
+
+    void ReturnToStart()
+    {
+        // ゲーム中に生成された全 GameObject を破棄（カメラは残す）
+        foreach (var go in Object.FindObjectsByType<GameObject>(FindObjectsSortMode.None))
+        {
+            if (go.GetComponent<Camera>() != null) continue;
+            Destroy(go);
+        }
+
+        // カメラ背景を黒にリセット
+        var cam = Camera.main;
+        if (cam != null)
+        {
+            cam.backgroundColor = Color.black;
+            cam.orthographicSize = 5.5f;
+            cam.transform.position = new Vector3(0f, 0f, -10f);
+        }
+
+        // EffectManager と StartScreen を再生成
+        new GameObject("EffectManager").AddComponent<EffectManager>();
+        new GameObject("StartScreen").AddComponent<StartScreen>();
     }
 
     void OnGUI()
