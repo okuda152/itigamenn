@@ -85,7 +85,7 @@ public class ArenaBuilder : MonoBehaviour
 
         var figGO = new GameObject("PlayerFigure");
         figGO.transform.SetParent(player.transform);
-        figGO.transform.localPosition = new Vector3(0f, -0.9f, 0f);
+        figGO.transform.localPosition = new Vector3(0f, 0.9f, 0f);
         var fig = figGO.AddComponent<PlayerSpriteAnimator>();
         fig.Init("Player/DrawCharacter", ctrl);
     }

@@ -28,16 +28,22 @@ public class PlayerSpriteAnimator : MonoBehaviour
         inst.transform.localPosition = Vector3.zero;
         inst.transform.localScale    = Vector3.one;
 
-        // アセット付属のコンポーネントを削除（競合防止）
-        Destroy(inst.GetComponent<PlayerMovement>());
-        Destroy(inst.GetComponent<CharacterController2D>());
-        Destroy(inst.GetComponent<Attack>());
+        // 競合するコンポーネントを即座に無効化（Destroy は遅延するので enabled=false を使う）
+        var pm = inst.GetComponent<PlayerMovement>();
+        if (pm) pm.enabled = false;
+        var cc = inst.GetComponent<CharacterController2D>();
+        if (cc) cc.enabled = false;
+        var atk = inst.GetComponent<Attack>();
+        if (atk) atk.enabled = false;
         var rb2 = inst.GetComponent<Rigidbody2D>();
-        if (rb2) Destroy(rb2);
-        foreach (var c in inst.GetComponents<Collider2D>()) Destroy(c);
+        if (rb2) rb2.simulated = false;
+        foreach (var c in inst.GetComponents<Collider2D>()) c.enabled = false;
 
-        anim      = inst.GetComponent<Animator>();
+        anim      = inst.GetComponentInChildren<Animator>(true);
         renderers = inst.GetComponentsInChildren<SpriteRenderer>(true);
+
+        if (anim == null)
+            Debug.LogError("[PlayerSpriteAnimator] Animator が見つかりません");
     }
 
     // ---- 毎フレーム ----
