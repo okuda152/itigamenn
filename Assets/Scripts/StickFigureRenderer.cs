@@ -57,13 +57,11 @@ public class StickFigureRenderer : MonoBehaviour
         Draw();
     }
 
-    // ---- State ----
-
     void UpdateState()
     {
         if (playerController == null) { state = State.Idle; return; }
 
-        bool attacking = playerCombat && playerCombat.IsAttacking;
+        bool attacking = playerCombat != null && playerCombat.IsAttacking;
 
         if      (attacking)                         state = State.Punch;
         else if (playerController.IsWallSliding)    state = State.WallSlide;
@@ -75,8 +73,6 @@ public class StickFigureRenderer : MonoBehaviour
         else if (Mathf.Abs(playerController.MoveInput) > 0.1f) state = State.Run;
         else                                                     state = State.Idle;
     }
-
-    // ---- Joints ----
 
     void SetBaseJoints()
     {
@@ -108,8 +104,6 @@ public class StickFigureRenderer : MonoBehaviour
             case State.Kick:      PoseKick(f);      break;
         }
     }
-
-    // ---- Poses ----
 
     void PoseIdle(float f)
     {
@@ -208,10 +202,7 @@ public class StickFigureRenderer : MonoBehaviour
         rFoot = rKnee + new Vector3( LEG_H * 0.44f * f,  -LEG_H * 0.10f, 0f);
     }
 
-    /// <summary>投石スポーン用：右手（投げ手）のワールド座標</summary>
     public Vector3 ThrowHandWorld => transform.TransformPoint(rHand);
-
-    // ---- Draw ----
 
     void Draw()
     {
@@ -240,8 +231,6 @@ public class StickFigureRenderer : MonoBehaviour
         lr.SetPosition(0, a);
         lr.SetPosition(1, b);
     }
-
-    // ---- Helpers ----
 
     LineRenderer MakeLR(string goName, int points, bool loop = false)
     {
