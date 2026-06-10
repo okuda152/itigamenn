@@ -88,8 +88,8 @@ public class BossManager : MonoBehaviour
         var figGO = new GameObject("DinoFigure");
         figGO.transform.SetParent(boss.transform);
         figGO.transform.localPosition = new Vector3(0f, 0.36f, 0f);
-        var dino  = figGO.AddComponent<DinoRenderer>();
-        dino.scale = 1.5f;
+        var vis = figGO.AddComponent<FantasyCharacterVisual>();
+        vis.Init("Characters/Character (58)");
     }
 
     void SpawnButterflyBoss()
@@ -108,8 +108,8 @@ public class BossManager : MonoBehaviour
         var figGO = new GameObject("ButterflyFigure");
         figGO.transform.SetParent(boss.transform);
         figGO.transform.localPosition = Vector3.zero;
-        var bfly  = figGO.AddComponent<ButterflyRenderer>();
-        bfly.scale = 1.6f;
+        var vis = figGO.AddComponent<FantasyCharacterVisual>();
+        vis.Init("Characters/Character (61)");
     }
 
     // ---- UI ----

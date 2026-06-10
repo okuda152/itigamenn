@@ -34,7 +34,7 @@ public class ButterflyBoss : MonoBehaviour, IDamageable
     bool             phase2     = false;
     bool             dead       = false;
 
-    ButterflyRenderer bfly;
+    FantasyCharacterVisual bfly;
     PlayerHealth      playerHealth;
 
     static readonly Color BaseColor  = new Color(0.85f, 0.20f, 0.95f);
@@ -45,7 +45,6 @@ public class ButterflyBoss : MonoBehaviour, IDamageable
     {
         hp = maxHP;
 
-        // Flying — no gravity, kinematic movement
         var rb = gameObject.AddComponent<Rigidbody2D>();
         rb.bodyType       = RigidbodyType2D.Kinematic;
         rb.gravityScale   = 0f;
@@ -57,7 +56,7 @@ public class ButterflyBoss : MonoBehaviour, IDamageable
 
     void Start()
     {
-        bfly         = GetComponentInChildren<ButterflyRenderer>();
+        bfly         = GetComponentInChildren<FantasyCharacterVisual>();
         playerHealth = Object.FindFirstObjectByType<PlayerHealth>();
         targetPos    = (Vector2)transform.position;
         waitTimer    = 1.2f;
@@ -67,14 +66,12 @@ public class ButterflyBoss : MonoBehaviour, IDamageable
     {
         if (dead) return;
 
-        // Hit flash
         if (flashTimer > 0f)
         {
             flashTimer -= Time.deltaTime;
-            if (flashTimer <= 0f && bfly) bfly.SetColor(BaseColor);
+            if (flashTimer <= 0f && bfly) bfly.SetColor(Color.white);
         }
 
-        // Phase 2 transition
         if (!phase2 && hp <= maxHP * 0.5f)
         {
             phase2     = true;
@@ -85,7 +82,6 @@ public class ButterflyBoss : MonoBehaviour, IDamageable
         {
             case State.Moving:  DoMove();  break;
             case State.Waiting: DoWait();  break;
-            // Attacking is handled by coroutine; no per-frame logic needed
         }
     }
 
@@ -95,16 +91,18 @@ public class ButterflyBoss : MonoBehaviour, IDamageable
         Vector2 next = Vector2.MoveTowards(cur, targetPos, moveSpeed * Time.deltaTime);
         transform.position = new Vector3(next.x, next.y, 0f);
 
+        if (bfly) { bfly.IsMoving = true; bfly.FacingRight = targetPos.x >= cur.x; }
+
         if (Vector2.Distance(cur, targetPos) < 0.12f)
         {
             state     = State.Waiting;
             waitTimer = phase2 ? Random.Range(0.3f, 0.7f) : Random.Range(0.7f, 1.3f);
+            if (bfly) bfly.IsMoving = false;
         }
     }
 
     void DoWait()
     {
-        // Gentle hover bob
         float bob = Mathf.Sin(Time.time * 2.5f) * 0.06f;
         transform.position = new Vector3(targetPos.x, targetPos.y + bob, 0f);
 
@@ -118,6 +116,7 @@ public class ButterflyBoss : MonoBehaviour, IDamageable
     IEnumerator AttackSequence()
     {
         state = State.Attacking;
+        if (bfly) bfly.TriggerAttack();
 
         int roll = phase2 ? Random.Range(0, 3) : Random.Range(0, 2);
         switch (roll)

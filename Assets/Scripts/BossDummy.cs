@@ -26,7 +26,7 @@ public class BossDummy : MonoBehaviour, IDamageable
     float flashTimer;
     float chargePuffTimer;
     Rigidbody2D rb;
-    DinoRenderer dino;
+    FantasyCharacterVisual dino;
     PlayerHealth playerHealth;
     int patrolDir = 1;
     bool dealtDamageThisCharge;
@@ -43,7 +43,7 @@ public class BossDummy : MonoBehaviour, IDamageable
 
     void Start()
     {
-        dino         = GetComponentInChildren<DinoRenderer>();
+        dino         = GetComponentInChildren<FantasyCharacterVisual>();
         playerHealth = Object.FindFirstObjectByType<PlayerHealth>();
         stateTimer   = Random.Range(1f, 2.5f);
     }
@@ -52,7 +52,7 @@ public class BossDummy : MonoBehaviour, IDamageable
     {
         if (flashTimer <= 0f) return;
         flashTimer -= Time.deltaTime;
-        if (flashTimer <= 0f && dino) dino.SetColor(BaseColor);
+        if (flashTimer <= 0f && dino) dino.SetColor(Color.white);
     }
 
     void FixedUpdate()
@@ -73,7 +73,7 @@ public class BossDummy : MonoBehaviour, IDamageable
     void DoPatrol()
     {
         rb.linearVelocity = new Vector2(patrolDir * patrolSpeed, rb.linearVelocity.y);
-        if (dino) { dino.facingRight = patrolDir > 0; dino.isWalking = true; dino.isCharging = false; dino.isWindingUp = false; }
+        if (dino) { dino.FacingRight = patrolDir > 0; dino.IsMoving = true; }
 
         if (stateTimer <= 0f && PlayerInRange(chargeDetectRange))
             EnterWindUp();
@@ -83,7 +83,6 @@ public class BossDummy : MonoBehaviour, IDamageable
     {
         rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
 
-        // 溜め中は小刻みに震える
         float shake = Mathf.Sin(Time.time * 40f) * 0.04f;
         rb.MovePosition(rb.position + new Vector2(shake * Time.fixedDeltaTime, 0f));
 
@@ -94,7 +93,6 @@ public class BossDummy : MonoBehaviour, IDamageable
     {
         rb.linearVelocity = new Vector2(chargeDir * chargeSpeed, rb.linearVelocity.y);
 
-        // 突進トレイル（0.06秒ごとに速度線を出す）
         chargePuffTimer -= Time.fixedDeltaTime;
         if (chargePuffTimer <= 0f)
         {
@@ -102,7 +100,6 @@ public class BossDummy : MonoBehaviour, IDamageable
             EffectManager.ChargePuff(transform.position, chargeDir > 0, BaseColor);
         }
 
-        // プレイヤーに接触ダメージ（1回のチャージで1回）
         if (!dealtDamageThisCharge && playerHealth != null)
         {
             float dist = Mathf.Abs(transform.position.x - playerHealth.transform.position.x);
@@ -119,7 +116,7 @@ public class BossDummy : MonoBehaviour, IDamageable
     void DoCooldown()
     {
         rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
-        if (dino) { dino.isCharging = false; dino.isWindingUp = false; dino.isWalking = false; }
+        if (dino) dino.IsMoving = false;
         if (stateTimer <= 0f) EnterPatrol();
     }
 
@@ -131,7 +128,7 @@ public class BossDummy : MonoBehaviour, IDamageable
         stateTimer = windUpDuration;
         if (playerHealth != null)
             chargeDir = playerHealth.transform.position.x > transform.position.x ? 1f : -1f;
-        if (dino) { dino.facingRight = chargeDir > 0; dino.isWalking = false; dino.isWindingUp = true; }
+        if (dino) { dino.FacingRight = chargeDir > 0; dino.IsMoving = false; dino.TriggerAttack(); }
         EffectManager.FocusLines(transform.position, windUpDuration);
     }
 
@@ -140,14 +137,14 @@ public class BossDummy : MonoBehaviour, IDamageable
         state                  = State.Charging;
         stateTimer             = chargeDuration;
         dealtDamageThisCharge  = false;
-        if (dino) { dino.isWindingUp = false; dino.isCharging = true; }
+        if (dino) dino.IsMoving = true;
     }
 
     void EnterCooldown()
     {
         state      = State.Cooldown;
         stateTimer = cooldownDuration;
-        if (dino) { dino.isCharging = false; }
+        if (dino) dino.IsMoving = false;
     }
 
     void EnterPatrol()
@@ -155,7 +152,7 @@ public class BossDummy : MonoBehaviour, IDamageable
         state      = State.Patrol;
         stateTimer = Random.Range(1.5f, 3f);
         patrolDir  = -(int)Mathf.Sign(chargeDir);
-        if (dino) dino.isWalking = true;
+        if (dino) dino.IsMoving = true;
     }
 
     // ---- 壁で反転 / チャージ中断 ----
