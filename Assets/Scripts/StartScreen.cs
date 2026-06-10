@@ -74,14 +74,6 @@ public class StartScreen : MonoBehaviour
             StartGame();
         }
 
-        // 操作説明
-        var infoStyle = new GUIStyle(GUI.skin.label)
-        {
-            fontSize  = 13,
-            alignment = TextAnchor.MiddleCenter,
-            normal    = { textColor = new Color(0.7f, 0.7f, 0.7f) }
-        };
-        GUI.Label(new Rect(0, sh * 0.89f, sw, 22f), "移動: A/D  ジャンプ: Space  パンチ: Z  キック: E  投石: Q", infoStyle);
     }
 
     void StartGame()
