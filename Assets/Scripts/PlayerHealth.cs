@@ -26,6 +26,11 @@ public class PlayerHealth : MonoBehaviour
     {
         if (isDead) return;
         hp = Mathf.Max(0f, hp - amount);
+
+        // 遅延バインド（Start より先に呼ばれた場合も対応）
+        if (!figureSprite) figureSprite = GetComponentInChildren<PlayerSpriteAnimator>();
+        if (!figure)       figure       = GetComponentInChildren<StickFigureRenderer>();
+
         StopCoroutine("FlashRoutine");
         StartCoroutine("FlashRoutine");
         if (hp <= 0f) StartCoroutine(Die());

@@ -3,12 +3,13 @@ using UnityEngine;
 public class PlayerSpriteAnimator : MonoBehaviour
 {
     Animator         anim;
+    SpriteRenderer   mainRenderer;
     PlayerController ctrl;
     PlayerCombat     combat;
     Rigidbody2D      rb;
 
-    Color  flashColor = Color.white;
-    float  flashTimer = 0f;
+    Color flashColor = Color.white;
+    float flashTimer = 0f;
 
     public void Init(string resourcePath, PlayerController controller)
     {
@@ -26,19 +27,18 @@ public class PlayerSpriteAnimator : MonoBehaviour
         inst.transform.localPosition = Vector3.zero;
         inst.transform.localScale    = Vector3.one;
 
-        var pm = inst.GetComponent<PlayerMovement>();
-        if (pm) pm.enabled = false;
-        var cc = inst.GetComponent<CharacterController2D>();
-        if (cc) cc.enabled = false;
-        var atk = inst.GetComponent<Attack>();
-        if (atk) atk.enabled = false;
-        var rb2 = inst.GetComponent<Rigidbody2D>();
-        if (rb2) rb2.simulated = false;
+        var pm = inst.GetComponent<PlayerMovement>();        if (pm)  pm.enabled = false;
+        var cc = inst.GetComponent<CharacterController2D>(); if (cc)  cc.enabled = false;
+        var atk = inst.GetComponent<Attack>();               if (atk) atk.enabled = false;
+        var rb2 = inst.GetComponent<Rigidbody2D>();          if (rb2) rb2.simulated = false;
         foreach (var c in inst.GetComponents<Collider2D>()) c.enabled = false;
 
-        anim = inst.GetComponentInChildren<Animator>(true);
-        if (anim == null)
-            Debug.LogError("[PlayerSpriteAnimator] Animator が見つかりません");
+        anim         = inst.GetComponentInChildren<Animator>(true);
+        mainRenderer = inst.GetComponentInChildren<SpriteRenderer>(true);
+
+        if (anim == null)         Debug.LogError("[PlayerSpriteAnimator] Animator が見つかりません");
+        if (mainRenderer == null) Debug.LogError("[PlayerSpriteAnimator] SpriteRenderer が見つかりません");
+        else                      Debug.Log($"[PlayerSpriteAnimator] SpriteRenderer 取得: {mainRenderer.gameObject.name}");
     }
 
     void Update()
@@ -46,7 +46,6 @@ public class PlayerSpriteAnimator : MonoBehaviour
         if (anim == null || ctrl == null) return;
 
         bool isAttacking = combat != null && combat.IsAttacking;
-
         anim.SetFloat("Speed",         Mathf.Abs(rb.linearVelocity.x));
         anim.SetBool ("IsJumping",     !ctrl.IsGrounded);
         anim.SetBool ("IsWallSliding", ctrl.IsWallSliding);
@@ -59,21 +58,19 @@ public class PlayerSpriteAnimator : MonoBehaviour
         if (flashTimer > 0f) flashTimer -= Time.deltaTime;
     }
 
-    // Animator の更新後に色を上書きする
+    // Animator 更新後に色を強制上書き
     void LateUpdate()
     {
-        Color target = flashTimer > 0f ? flashColor : Color.white;
-        foreach (var r in GetComponentsInChildren<SpriteRenderer>(true))
-            r.color = target;
+        if (mainRenderer == null) return;
+        mainRenderer.color = flashTimer > 0f ? flashColor : Color.white;
     }
 
-    // PlayerHealth から呼ぶ: c=赤で開始、c=white でリセット
     public void Flash(Color c, float duration)
     {
         flashColor = c;
         flashTimer = duration;
+        Debug.Log($"[PlayerSpriteAnimator] Flash called: {c}, {duration}s, renderer={mainRenderer != null}");
     }
 
-    // 後方互換
     public void SetColor(Color c) { }
 }
