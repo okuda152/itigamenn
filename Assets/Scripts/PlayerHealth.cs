@@ -8,40 +8,38 @@ public class PlayerHealth : MonoBehaviour
 
     float hp;
     bool  isDead = false;
+    float damageFlash = 0f;
     StickFigureRenderer  figure;
-    PlayerSpriteAnimator figureSprite;
 
-    static readonly Color HitColor  = new Color(1f, 0.2f, 0.2f);
     static readonly Color BaseColor = Color.black;
 
     void Awake() => hp = maxHP;
 
     void Start()
     {
-        figure       = GetComponentInChildren<StickFigureRenderer>();
-        figureSprite = GetComponentInChildren<PlayerSpriteAnimator>();
+        figure = GetComponentInChildren<StickFigureRenderer>();
+    }
+
+    void Update()
+    {
+        if (damageFlash > 0f) damageFlash -= Time.deltaTime * 4f;
     }
 
     public void TakeDamage(float amount)
     {
         if (isDead) return;
         hp = Mathf.Max(0f, hp - amount);
-
-        // 遅延バインド（Start より先に呼ばれた場合も対応）
-        if (!figureSprite) figureSprite = GetComponentInChildren<PlayerSpriteAnimator>();
-        if (!figure)       figure       = GetComponentInChildren<StickFigureRenderer>();
-
-        StopCoroutine("FlashRoutine");
-        StartCoroutine("FlashRoutine");
+        damageFlash = 1f;
+        if (!figure) figure = GetComponentInChildren<StickFigureRenderer>();
+        if (figure)  figure.SetColor(new Color(1f, 0.2f, 0.2f));
+        StartCoroutine(ResetFigureColor());
         if (hp <= 0f) StartCoroutine(Die());
     }
 
-    IEnumerator FlashRoutine()
+    IEnumerator ResetFigureColor()
     {
-        if (figure)       figure.SetColor(HitColor);
-        if (figureSprite) figureSprite.Flash(HitColor, 0.3f);
-        yield return new WaitForSeconds(0.3f);
-        if (figure)       figure.SetColor(BaseColor);
+        yield return new WaitForSeconds(0.25f);
+        if (figure) figure.SetColor(BaseColor);
     }
 
     IEnumerator Die()
@@ -103,6 +101,14 @@ public class PlayerHealth : MonoBehaviour
             GUI.color = Color.white;
             GUI.Label(new Rect(0, 0, Screen.width, Screen.height), "G A M E  O V E R", style);
             return;
+        }
+
+        // ---- ダメージフラッシュ ----
+        if (damageFlash > 0f)
+        {
+            GUI.color = new Color(1f, 0f, 0f, damageFlash * 0.45f);
+            GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), Texture2D.whiteTexture);
+            GUI.color = Color.white;
         }
 
         // ---- HP バー（既存）----
