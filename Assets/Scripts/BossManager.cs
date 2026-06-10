@@ -87,9 +87,9 @@ public class BossManager : MonoBehaviour
 
         var figGO = new GameObject("DinoFigure");
         figGO.transform.SetParent(boss.transform);
-        figGO.transform.localPosition = new Vector3(0f, 0.36f, 0f);
+        figGO.transform.localPosition = new Vector3(0f, -0.2f, 0f);
         var vis = figGO.AddComponent<FantasyCharacterVisual>();
-        vis.Init("Characters/Character (58)");
+        vis.Init("Characters/Character (58)", scale: 1.8f, flipX: true);
     }
 
     void SpawnButterflyBoss()

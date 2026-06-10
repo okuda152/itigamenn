@@ -11,7 +11,7 @@ public class FantasyCharacterVisual : MonoBehaviour
 
     // ---- 初期化 ----
 
-    public void Init(string resourcePath, float scale = 1f)
+    public void Init(string resourcePath, float scale = 1f, bool flipX = false)
     {
         var prefab = Resources.Load<GameObject>(resourcePath);
         if (prefab == null)
@@ -21,7 +21,7 @@ public class FantasyCharacterVisual : MonoBehaviour
         }
         var inst = Instantiate(prefab, transform);
         inst.transform.localPosition = Vector3.zero;
-        inst.transform.localScale    = Vector3.one * scale;
+        inst.transform.localScale    = new Vector3(flipX ? -scale : scale, scale, scale);
 
         anim      = inst.GetComponentInChildren<Animator>();
         renderers = inst.GetComponentsInChildren<SpriteRenderer>(true);
