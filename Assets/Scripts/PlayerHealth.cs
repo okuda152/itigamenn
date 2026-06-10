@@ -52,6 +52,8 @@ public class PlayerHealth : MonoBehaviour
         // 入力・ビジュアルを止める
         var ctrl = GetComponent<PlayerController>();
         if (ctrl) ctrl.enabled = false;
+        foreach (var sr in GetComponentsInChildren<SpriteRenderer>(true))
+            sr.enabled = false;
         if (figure) figure.gameObject.SetActive(false);
 
         // 2.5秒後に全オブジェクトを破棄してスタート画面へ
