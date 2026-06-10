@@ -35,7 +35,7 @@ public class PlayerCombat : MonoBehaviour
         var kb = Keyboard.current;
         if (kb == null) return;
 
-        if (kb.eKey.wasPressedThisFrame && attackTimer <= 0f)
+        if (kb.zKey.wasPressedThisFrame && attackTimer <= 0f)
             StartCoroutine(AttackRoutine());
 
         if (kb.qKey.wasPressedThisFrame && throwTimer <= 0f)
