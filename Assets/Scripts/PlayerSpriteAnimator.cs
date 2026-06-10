@@ -71,7 +71,7 @@ public class PlayerSpriteAnimator : MonoBehaviour
 
     public void SetColor(Color c)
     {
-        if (renderers == null) return;
-        foreach (var r in renderers) r.color = c;
+        foreach (var r in GetComponentsInChildren<SpriteRenderer>(true))
+            r.color = c;
     }
 }

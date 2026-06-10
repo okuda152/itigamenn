@@ -7,11 +7,11 @@ public class PlayerHealth : MonoBehaviour
     public float maxHP = 100f;
 
     float hp;
-    float flashTimer;
     bool  isDead = false;
     StickFigureRenderer  figure;
     PlayerSpriteAnimator figureSprite;
 
+    static readonly Color HitColor  = new Color(1f, 0.2f, 0.2f);
     static readonly Color BaseColor = Color.black;
 
     void Awake() => hp = maxHP;
@@ -22,25 +22,22 @@ public class PlayerHealth : MonoBehaviour
         figureSprite = GetComponentInChildren<PlayerSpriteAnimator>();
     }
 
-    void Update()
-    {
-        if (flashTimer <= 0f) return;
-        flashTimer -= Time.deltaTime;
-        if (flashTimer <= 0f)
-        {
-            if (figure)       figure.SetColor(BaseColor);
-            if (figureSprite) figureSprite.SetColor(Color.white);
-        }
-    }
-
     public void TakeDamage(float amount)
     {
         if (isDead) return;
         hp = Mathf.Max(0f, hp - amount);
-        if (figure)       { figure.SetColor(new Color(1f, 0.3f, 0.3f)); }
-        if (figureSprite) { figureSprite.SetColor(new Color(1f, 0.3f, 0.3f)); }
-        flashTimer = 0.15f;
+        StopCoroutine("FlashRoutine");
+        StartCoroutine("FlashRoutine");
         if (hp <= 0f) StartCoroutine(Die());
+    }
+
+    IEnumerator FlashRoutine()
+    {
+        if (figure)       figure.SetColor(HitColor);
+        if (figureSprite) figureSprite.SetColor(HitColor);
+        yield return new WaitForSeconds(0.3f);
+        if (figure)       figure.SetColor(BaseColor);
+        if (figureSprite) figureSprite.SetColor(Color.white);
     }
 
     IEnumerator Die()
