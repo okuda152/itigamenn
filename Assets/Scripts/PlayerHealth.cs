@@ -34,10 +34,9 @@ public class PlayerHealth : MonoBehaviour
     IEnumerator FlashRoutine()
     {
         if (figure)       figure.SetColor(HitColor);
-        if (figureSprite) figureSprite.SetColor(HitColor);
+        if (figureSprite) figureSprite.Flash(HitColor, 0.3f);
         yield return new WaitForSeconds(0.3f);
         if (figure)       figure.SetColor(BaseColor);
-        if (figureSprite) figureSprite.SetColor(Color.white);
     }
 
     IEnumerator Die()

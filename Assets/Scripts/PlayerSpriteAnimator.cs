@@ -1,18 +1,14 @@
 using UnityEngine;
 
-/// <summary>
-/// Metroidvania Controller の DrawCharacter プレハブを視覚として使うラッパー。
-/// 自前の PlayerController/PlayerCombat の状態を Animator に橋渡しする。
-/// </summary>
 public class PlayerSpriteAnimator : MonoBehaviour
 {
     Animator         anim;
-    SpriteRenderer[] renderers;
     PlayerController ctrl;
     PlayerCombat     combat;
     Rigidbody2D      rb;
 
-    // ---- 初期化 ----
+    Color  flashColor = Color.white;
+    float  flashTimer = 0f;
 
     public void Init(string resourcePath, PlayerController controller)
     {
@@ -30,7 +26,6 @@ public class PlayerSpriteAnimator : MonoBehaviour
         inst.transform.localPosition = Vector3.zero;
         inst.transform.localScale    = Vector3.one;
 
-        // 競合するコンポーネントを即座に無効化
         var pm = inst.GetComponent<PlayerMovement>();
         if (pm) pm.enabled = false;
         var cc = inst.GetComponent<CharacterController2D>();
@@ -41,14 +36,10 @@ public class PlayerSpriteAnimator : MonoBehaviour
         if (rb2) rb2.simulated = false;
         foreach (var c in inst.GetComponents<Collider2D>()) c.enabled = false;
 
-        anim      = inst.GetComponentInChildren<Animator>(true);
-        renderers = inst.GetComponentsInChildren<SpriteRenderer>(true);
-
+        anim = inst.GetComponentInChildren<Animator>(true);
         if (anim == null)
             Debug.LogError("[PlayerSpriteAnimator] Animator が見つかりません");
     }
-
-    // ---- 毎フレーム ----
 
     void Update()
     {
@@ -61,20 +52,28 @@ public class PlayerSpriteAnimator : MonoBehaviour
         anim.SetBool ("IsWallSliding", ctrl.IsWallSliding);
         anim.SetBool ("IsAttacking",   isAttacking);
 
-        // 向き（壁張り付き中は反転）
         bool faceRight = ctrl.IsWallSliding ? !ctrl.FacingRight : ctrl.FacingRight;
         float sx = Mathf.Abs(transform.localScale.x);
         transform.localScale = new Vector3(faceRight ? sx : -sx, sx, sx);
+
+        if (flashTimer > 0f) flashTimer -= Time.deltaTime;
     }
 
-    // ---- ヒットフラッシュ ----
-
-    public void SetColor(Color c)
+    // Animator の更新後に色を上書きする
+    void LateUpdate()
     {
+        Color target = flashTimer > 0f ? flashColor : Color.white;
         foreach (var r in GetComponentsInChildren<SpriteRenderer>(true))
-        {
-            r.color = c;
-            if (r.material != null) r.material.color = c;
-        }
+            r.color = target;
     }
+
+    // PlayerHealth から呼ぶ: c=赤で開始、c=white でリセット
+    public void Flash(Color c, float duration)
+    {
+        flashColor = c;
+        flashTimer = duration;
+    }
+
+    // 後方互換
+    public void SetColor(Color c) { }
 }
