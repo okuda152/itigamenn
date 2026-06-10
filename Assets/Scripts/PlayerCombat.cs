@@ -68,7 +68,7 @@ public class PlayerCombat : MonoBehaviour
             EffectManager.HitRing(origin, new Color(1f, 0.7f, 0.2f));
         }
 
-        yield return new WaitForSeconds(0.22f);
+        yield return new WaitForSeconds(0.05f);
         IsAttacking = false;
     }
 
