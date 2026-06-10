@@ -81,13 +81,14 @@ public class BossManager : MonoBehaviour
         rb.gravityScale   = 3f;
 
         var col  = boss.AddComponent<CapsuleCollider2D>();
-        col.size = new Vector2(0.45f, 1.8f);
+        col.size   = new Vector2(1.4f, 2.4f);
+        col.offset = new Vector2(0f, 0.4f);
 
         boss.AddComponent<BossDummy>();
 
         var figGO = new GameObject("DinoFigure");
         figGO.transform.SetParent(boss.transform);
-        figGO.transform.localPosition = new Vector3(0f, 0.15f, 0f);
+        figGO.transform.localPosition = new Vector3(0f, 0.6f, 0f);
         var vis = figGO.AddComponent<FantasyCharacterVisual>();
         vis.Init("Characters/Character (58)", scale: 1.8f, flipX: true);
     }
@@ -98,7 +99,8 @@ public class BossManager : MonoBehaviour
         boss.transform.position = new Vector3(0f, arenaHeight * 0.15f, 0f);
 
         var col  = boss.AddComponent<CapsuleCollider2D>();
-        col.size = new Vector2(0.8f, 0.9f);
+        col.size   = new Vector2(1.2f, 1.8f);
+        col.offset = new Vector2(0f, 0.1f);
 
         var bboss         = boss.AddComponent<ButterflyBoss>();
         bboss.arenaHalfW  = arenaWidth  * 0.5f - 1.5f;
@@ -107,7 +109,7 @@ public class BossManager : MonoBehaviour
 
         var figGO = new GameObject("ButterflyFigure");
         figGO.transform.SetParent(boss.transform);
-        figGO.transform.localPosition = Vector3.zero;
+        figGO.transform.localPosition = new Vector3(0f, 0.1f, 0f);
         var vis = figGO.AddComponent<FantasyCharacterVisual>();
         vis.Init("Characters/Character (71)", scale: 1.5f);
     }
