@@ -5,10 +5,12 @@ public class PlayerSpriteAnimator : MonoBehaviour
 {
     Animator         anim;
     SpriteRenderer   mainRenderer;
-    Material         instanceMat;
+    SpriteRenderer   hitOverlay;
     PlayerController ctrl;
     PlayerCombat     combat;
     Rigidbody2D      rb;
+
+    bool isFlashing = false;
 
     public void Init(string resourcePath, PlayerController controller)
     {
@@ -17,24 +19,35 @@ public class PlayerSpriteAnimator : MonoBehaviour
         rb     = controller.GetComponent<Rigidbody2D>();
 
         var prefab = Resources.Load<GameObject>(resourcePath);
-        if (prefab == null) { Debug.LogError($"[PSA] prefab not found: {resourcePath}"); return; }
+        if (prefab == null) { Debug.LogError($"[PSA] not found: {resourcePath}"); return; }
 
         var inst = Instantiate(prefab, transform);
         inst.transform.localPosition = Vector3.zero;
         inst.transform.localScale    = Vector3.one;
 
-        var pm  = inst.GetComponent<PlayerMovement>();        if (pm)  pm.enabled  = false;
-        var cc  = inst.GetComponent<CharacterController2D>(); if (cc)  cc.enabled  = false;
-        var atk = inst.GetComponent<Attack>();                if (atk) atk.enabled = false;
+        var pm  = inst.GetComponent<PlayerMovement>();        if (pm)  pm.enabled    = false;
+        var cc  = inst.GetComponent<CharacterController2D>(); if (cc)  cc.enabled    = false;
+        var atk = inst.GetComponent<Attack>();                if (atk) atk.enabled   = false;
         var rb2 = inst.GetComponent<Rigidbody2D>();           if (rb2) rb2.simulated = false;
         foreach (var c in inst.GetComponents<Collider2D>()) c.enabled = false;
 
         anim         = inst.GetComponentInChildren<Animator>(true);
         mainRenderer = inst.GetComponentInChildren<SpriteRenderer>(true);
 
-        // マテリアルインスタンスを作成（sharedMaterial を汚さない）
+        // キャラ上に重ねる赤オーバーレイ用 SpriteRenderer を作成
         if (mainRenderer != null)
-            instanceMat = new Material(mainRenderer.sharedMaterial);
+        {
+            var overlayGO = new GameObject("HitOverlay");
+            overlayGO.transform.SetParent(mainRenderer.transform);
+            overlayGO.transform.localPosition = Vector3.zero;
+            overlayGO.transform.localScale    = Vector3.one;
+
+            hitOverlay              = overlayGO.AddComponent<SpriteRenderer>();
+            hitOverlay.sprite       = mainRenderer.sprite;
+            hitOverlay.sortingLayerID = mainRenderer.sortingLayerID;
+            hitOverlay.sortingOrder = mainRenderer.sortingOrder + 1;
+            hitOverlay.color        = new Color(1f, 0.1f, 0.1f, 0f); // 初期は透明
+        }
     }
 
     void Update()
@@ -52,39 +65,27 @@ public class PlayerSpriteAnimator : MonoBehaviour
         transform.localScale = new Vector3(faceRight ? sx : -sx, sx, sx);
     }
 
+    void LateUpdate()
+    {
+        if (hitOverlay == null || mainRenderer == null) return;
+        // Animator がスプライトを切り替えても追従する
+        hitOverlay.sprite = mainRenderer.sprite;
+        hitOverlay.color  = isFlashing
+            ? new Color(1f, 0.1f, 0.1f, 0.85f)
+            : new Color(1f, 0.1f, 0.1f, 0f);
+    }
+
     public void Flash(Color c, float duration)
     {
         StopAllCoroutines();
-        StartCoroutine(FlashRoutine(c, duration));
+        StartCoroutine(FlashCo(duration));
     }
 
-    IEnumerator FlashRoutine(Color c, float duration)
+    IEnumerator FlashCo(float duration)
     {
-        // Animator を止めて色変化を妨害させない
-        if (anim) anim.enabled = false;
-
-        ApplyColor(c);
-
+        isFlashing = true;
         yield return new WaitForSeconds(duration);
-
-        ApplyColor(Color.white);
-
-        if (anim) anim.enabled = true;
-    }
-
-    void ApplyColor(Color c)
-    {
-        if (mainRenderer == null) return;
-
-        // 1. SpriteRenderer.color（頂点カラー）
-        mainRenderer.color = c;
-
-        // 2. マテリアルインスタンスの _Color
-        if (instanceMat != null)
-        {
-            instanceMat.color = c;
-            mainRenderer.material = instanceMat;
-        }
+        isFlashing = false;
     }
 
     public void SetColor(Color c) { }
