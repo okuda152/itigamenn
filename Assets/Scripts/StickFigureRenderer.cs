@@ -63,11 +63,9 @@ public class StickFigureRenderer : MonoBehaviour
     {
         if (playerController == null) { state = State.Idle; return; }
 
-        bool punching = playerCombat && playerCombat.IsPunching;
-        bool kicking  = playerCombat && playerCombat.IsKicking;
+        bool attacking = playerCombat && playerCombat.IsAttacking;
 
-        if      (punching)                          state = State.Punch;
-        else if (kicking)                           state = State.Kick;
+        if      (attacking)                         state = State.Punch;
         else if (playerController.IsWallSliding)    state = State.WallSlide;
         else if (!playerController.IsGrounded)
         {
