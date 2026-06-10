@@ -8,7 +8,7 @@ using System.IO;
 /// </summary>
 public static class CharacterSetup
 {
-    static readonly int[] CharacterNumbers = { 58, 61 };
+    static readonly int[] CharacterNumbers = { 58, 71 };
 
     [MenuItem("Game/Setup Character Prefabs")]
     static void Setup()

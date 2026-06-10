@@ -109,7 +109,7 @@ public class BossManager : MonoBehaviour
         figGO.transform.SetParent(boss.transform);
         figGO.transform.localPosition = Vector3.zero;
         var vis = figGO.AddComponent<FantasyCharacterVisual>();
-        vis.Init("Characters/Character (61)");
+        vis.Init("Characters/Character (71)");
     }
 
     // ---- UI ----
