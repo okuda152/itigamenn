@@ -9,26 +9,37 @@ public class PlayerHealth : MonoBehaviour
     float hp;
     float flashTimer;
     bool  isDead = false;
-    StickFigureRenderer figure;
+    StickFigureRenderer  figure;
+    PlayerSpriteAnimator figureSprite;
 
     static readonly Color BaseColor = Color.black;
 
     void Awake() => hp = maxHP;
 
-    void Start() => figure = GetComponentInChildren<StickFigureRenderer>();
+    void Start()
+    {
+        figure       = GetComponentInChildren<StickFigureRenderer>();
+        figureSprite = GetComponentInChildren<PlayerSpriteAnimator>();
+    }
 
     void Update()
     {
         if (flashTimer <= 0f) return;
         flashTimer -= Time.deltaTime;
-        if (flashTimer <= 0f && figure) figure.SetColor(BaseColor);
+        if (flashTimer <= 0f)
+        {
+            if (figure)       figure.SetColor(BaseColor);
+            if (figureSprite) figureSprite.SetColor(Color.white);
+        }
     }
 
     public void TakeDamage(float amount)
     {
         if (isDead) return;
         hp = Mathf.Max(0f, hp - amount);
-        if (figure) { figure.SetColor(new Color(1f, 0.3f, 0.3f)); flashTimer = 0.15f; }
+        if (figure)       { figure.SetColor(new Color(1f, 0.3f, 0.3f)); }
+        if (figureSprite) { figureSprite.SetColor(new Color(1f, 0.3f, 0.3f)); }
+        flashTimer = 0.15f;
         if (hp <= 0f) StartCoroutine(Die());
     }
 
@@ -42,7 +53,8 @@ public class PlayerHealth : MonoBehaviour
         // 入力・ビジュアルを止める
         var ctrl = GetComponent<PlayerController>();
         if (ctrl) ctrl.enabled = false;
-        if (figure) figure.gameObject.SetActive(false);
+        if (figure)       figure.gameObject.SetActive(false);
+        if (figureSprite) figureSprite.gameObject.SetActive(false);
 
         // 2.5秒後に全オブジェクトを破棄してスタート画面へ
         yield return new WaitForSeconds(2.5f);

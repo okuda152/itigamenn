@@ -83,13 +83,11 @@ public class ArenaBuilder : MonoBehaviour
         var combat = player.AddComponent<PlayerCombat>();
         player.AddComponent<PlayerHealth>();
 
-        var figGO = new GameObject("StickFigure");
+        var figGO = new GameObject("PlayerFigure");
         figGO.transform.SetParent(player.transform);
-        figGO.transform.localPosition = new Vector3(0f, -0.5f, 0f);
-        var fig = figGO.AddComponent<StickFigureRenderer>();
-        fig.playerController = ctrl;
-        fig.playerCombat     = combat;
-        fig.color            = Color.black;
+        figGO.transform.localPosition = new Vector3(0f, -0.9f, 0f);
+        var fig = figGO.AddComponent<PlayerSpriteAnimator>();
+        fig.Init("Player/DrawCharacter", ctrl);
     }
 
     // ---- Util ----

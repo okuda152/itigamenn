@@ -10,6 +10,30 @@ public static class CharacterSetup
 {
     static readonly int[] CharacterNumbers = { 58, 71 };
 
+    [MenuItem("Game/Setup Player Prefab")]
+    static void SetupPlayer()
+    {
+        string src = "Assets/MetroidvaniaController/Prefabs/DrawCharacter.prefab";
+        string dir = "Assets/Resources/Player";
+        string dst = $"{dir}/DrawCharacter.prefab";
+
+        if (!AssetDatabase.IsValidFolder("Assets/Resources"))
+            AssetDatabase.CreateFolder("Assets", "Resources");
+        if (!AssetDatabase.IsValidFolder(dir))
+            AssetDatabase.CreateFolder("Assets/Resources", "Player");
+
+        if (!System.IO.File.Exists(System.IO.Path.GetFullPath(src)))
+        { EditorUtility.DisplayDialog("Error", "DrawCharacter.prefab が見つかりません", "OK"); return; }
+
+        if (System.IO.File.Exists(System.IO.Path.GetFullPath(dst)))
+        { EditorUtility.DisplayDialog("Setup Complete", "移動済みです。", "OK"); return; }
+
+        string err = AssetDatabase.MoveAsset(src, dst);
+        AssetDatabase.Refresh();
+        EditorUtility.DisplayDialog("Setup Complete",
+            string.IsNullOrEmpty(err) ? "DrawCharacter を Resources/Player/ に移動しました。" : $"失敗: {err}", "OK");
+    }
+
     [MenuItem("Game/Setup Character Prefabs")]
     static void Setup()
     {
