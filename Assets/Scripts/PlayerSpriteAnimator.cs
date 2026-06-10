@@ -2,21 +2,23 @@ using UnityEngine;
 
 /// <summary>
 /// Metroidvania Controller の DrawCharacter プレハブを視覚として使うラッパー。
-/// 自前の PlayerController の状態を Animator に橋渡しする。
+/// 自前の PlayerController/PlayerCombat の状態を Animator に橋渡しする。
 /// </summary>
 public class PlayerSpriteAnimator : MonoBehaviour
 {
     Animator         anim;
     SpriteRenderer[] renderers;
     PlayerController ctrl;
+    PlayerCombat     combat;
     Rigidbody2D      rb;
 
     // ---- 初期化 ----
 
     public void Init(string resourcePath, PlayerController controller)
     {
-        ctrl = controller;
-        rb   = controller.GetComponent<Rigidbody2D>();
+        ctrl   = controller;
+        combat = controller.GetComponent<PlayerCombat>();
+        rb     = controller.GetComponent<Rigidbody2D>();
 
         var prefab = Resources.Load<GameObject>(resourcePath);
         if (prefab == null)
@@ -28,7 +30,7 @@ public class PlayerSpriteAnimator : MonoBehaviour
         inst.transform.localPosition = Vector3.zero;
         inst.transform.localScale    = Vector3.one;
 
-        // 競合するコンポーネントを即座に無効化（Destroy は遅延するので enabled=false を使う）
+        // 競合するコンポーネントを即座に無効化
         var pm = inst.GetComponent<PlayerMovement>();
         if (pm) pm.enabled = false;
         var cc = inst.GetComponent<CharacterController2D>();
@@ -52,8 +54,12 @@ public class PlayerSpriteAnimator : MonoBehaviour
     {
         if (anim == null || ctrl == null) return;
 
-        anim.SetFloat("Speed",     Mathf.Abs(rb.linearVelocity.x));
-        anim.SetBool ("IsJumping", !ctrl.IsGrounded);
+        bool isAttacking = combat != null && (combat.IsPunching || combat.IsKicking);
+
+        anim.SetFloat("Speed",          Mathf.Abs(rb.linearVelocity.x));
+        anim.SetBool ("IsJumping",      !ctrl.IsGrounded);
+        anim.SetBool ("IsWallSliding",  ctrl.IsWallSliding);
+        anim.SetBool ("IsAttacking",    isAttacking);
 
         // 向き
         float sx = Mathf.Abs(transform.localScale.x);
