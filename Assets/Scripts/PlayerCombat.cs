@@ -6,10 +6,10 @@ using System.Collections;
 public class PlayerCombat : MonoBehaviour
 {
     [Header("Attack")]
-    public float attackDamage   = 20f;
-    public float attackRange    = 1.5f;
-    public float attackKnockback = 6f;
-    public float attackCooldown = 0.5f;
+    public float attackDamage   = 10f;
+    public float attackRange    = 1.2f;
+    public float attackKnockback = 3f;
+    public float attackCooldown = 0.35f;
 
     [Header("Throw")]
     public float throwDamage   = 15f;
@@ -35,7 +35,7 @@ public class PlayerCombat : MonoBehaviour
         var kb = Keyboard.current;
         if (kb == null) return;
 
-        if (kb.zKey.wasPressedThisFrame && attackTimer <= 0f)
+        if (kb.eKey.wasPressedThisFrame && attackTimer <= 0f)
             StartCoroutine(AttackRoutine());
 
         if (kb.qKey.wasPressedThisFrame && throwTimer <= 0f)
