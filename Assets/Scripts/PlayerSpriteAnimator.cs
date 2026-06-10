@@ -54,16 +54,17 @@ public class PlayerSpriteAnimator : MonoBehaviour
     {
         if (anim == null || ctrl == null) return;
 
-        bool isAttacking = combat != null && (combat.IsPunching || combat.IsKicking);
+        bool isAttacking = combat != null && combat.IsAttacking;
 
-        anim.SetFloat("Speed",          Mathf.Abs(rb.linearVelocity.x));
-        anim.SetBool ("IsJumping",      !ctrl.IsGrounded);
-        anim.SetBool ("IsWallSliding",  ctrl.IsWallSliding);
-        anim.SetBool ("IsAttacking",    isAttacking);
+        anim.SetFloat("Speed",         Mathf.Abs(rb.linearVelocity.x));
+        anim.SetBool ("IsJumping",     !ctrl.IsGrounded);
+        anim.SetBool ("IsWallSliding", ctrl.IsWallSliding);
+        anim.SetBool ("IsAttacking",   isAttacking);
 
-        // 向き
+        // 向き（壁張り付き中は反転）
+        bool faceRight = ctrl.IsWallSliding ? !ctrl.FacingRight : ctrl.FacingRight;
         float sx = Mathf.Abs(transform.localScale.x);
-        transform.localScale = new Vector3(ctrl.FacingRight ? sx : -sx, sx, sx);
+        transform.localScale = new Vector3(faceRight ? sx : -sx, sx, sx);
     }
 
     // ---- ヒットフラッシュ ----
