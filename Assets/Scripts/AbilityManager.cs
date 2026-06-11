@@ -18,7 +18,7 @@ public class AbilityManager : MonoBehaviour
     bool             doubleJumpUsed = false;
     float            specialCooldown = 0f;
     const float      TACKLE_CD = 10f;
-    const float      BARRAGE_CD = 2f;
+    const float      BARRAGE_CD = 10f;
 
     public MovementAbility[] MoveSlots   => moveSlots;
     public SpecialAbility    SpecialSlot => specialSlot;
