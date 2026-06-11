@@ -17,7 +17,7 @@ public class BossManager : MonoBehaviour
     {
         BossDummy.OnDied     += OnDinoDied;
         ButterflyBoss.OnDied += OnButterflyDied;
-        SpawnDinoBoss();
+        SpawnButterflyBoss();
     }
 
     void OnDestroy()
@@ -28,8 +28,8 @@ public class BossManager : MonoBehaviour
 
     // ---- Event handlers ----
 
-    void OnDinoDied()      => ShowAbilitySelect(DinoOffers(),      () => StartCoroutine(Transition(SpawnButterflyBoss, "N E X T  B O S S")));
-    void OnButterflyDied() => ShowAbilitySelect(ButterflyOffers(), () => StartCoroutine(ClearSequence()));
+    void OnDinoDied()      => ShowAbilitySelect(DinoOffers(),      () => StartCoroutine(ClearSequence()));
+    void OnButterflyDied() => ShowAbilitySelect(ButterflyOffers(), () => StartCoroutine(Transition(SpawnDinoBoss, "N E X T  B O S S")));
 
     void ShowAbilitySelect(AbilitySelectUI.AbilityOffer[] offers, System.Action callback)
     {
