@@ -3,6 +3,8 @@ using UnityEngine.InputSystem;
 using System.Collections;
 using System.Collections.Generic;
 
+
+
 public enum MovementAbility { None, SpeedBoost, DoubleJump }
 public enum SpecialAbility  { None, SubspaceTackle, BulletBarrage }
 
@@ -151,64 +153,97 @@ public class AbilityManager : MonoBehaviour
 
     // ---- HUD ----
 
+    static readonly Dictionary<string, Texture2D> iconCache = new();
+
+    static Texture2D LoadIcon(string name)
+    {
+        if (string.IsNullOrEmpty(name)) return null;
+        if (!iconCache.TryGetValue(name, out var tex))
+        {
+            tex = Resources.Load<Texture2D>($"SkillIcons/{name}");
+            iconCache[name] = tex;
+        }
+        return tex;
+    }
+
+    static string MoveIcon(MovementAbility a) => a switch
+    {
+        MovementAbility.SpeedBoost => "UI_Skill_Icon_Buff",
+        MovementAbility.DoubleJump => "UI_Skill_Icon_Fly",
+        _                          => null
+    };
+
+    static string SpecialIcon(SpecialAbility a) => a switch
+    {
+        SpecialAbility.SubspaceTackle => "UI_Skill_Icon_Blackhole",
+        SpecialAbility.BulletBarrage  => "UI_Skill_Icon_Arrow_Barrage",
+        _                             => null
+    };
+
     void OnGUI()
     {
-        float sw = Screen.width;
+        const float SIZE  = 56f;
+        const float PAD   = 6f;
+        const float LEFT  = 18f;
+        const float TOP   = 18f;
 
-        var labelStyle = new GUIStyle(GUI.skin.label)
-        {
-            fontSize  = 11,
-            alignment = TextAnchor.MiddleCenter,
-            normal    = { textColor = Color.white }
-        };
-        var titleStyle = new GUIStyle(GUI.skin.label)
-        {
-            fontSize  = 10,
-            alignment = TextAnchor.MiddleLeft,
-            normal    = { textColor = new Color(0.7f, 0.7f, 0.7f) }
-        };
-
-        float x = 20f;
-        float y = 20f;
-        float slotW = 100f;
-        float slotH = 36f;
-        float gap = 6f;
-
-        // 移動スロット
-        GUI.Label(new Rect(x, y, 60f, 16f), "移動強化", titleStyle);
+        // 移動スロット x2 → 必殺技スロット x1
         for (int i = 0; i < MoveSlotCount; i++)
+            DrawSlot(new Rect(LEFT, TOP + i * (SIZE + PAD), SIZE, SIZE),
+                     LoadIcon(MoveIcon(moveSlots[i])),
+                     moveSlots[i] != MovementAbility.None,
+                     false, 0f, 0f);
+
+        float spY = TOP + MoveSlotCount * (SIZE + PAD) + PAD;
+        DrawSlot(new Rect(LEFT, spY, SIZE, SIZE),
+                 LoadIcon(SpecialIcon(specialSlot)),
+                 specialSlot != SpecialAbility.None,
+                 specialSlot != SpecialAbility.None && specialCooldown > 0f,
+                 specialCooldown, MaxSpecialCooldown);
+    }
+
+    static void DrawSlot(Rect r, Texture2D icon, bool filled, bool onCooldown, float cd, float maxCd)
+    {
+        // 背景
+        GUI.color = new Color(0f, 0f, 0f, 0.55f);
+        GUI.DrawTexture(r, Texture2D.whiteTexture);
+
+        // アイコン
+        if (icon != null)
         {
-            float sx = x + i * (slotW + gap);
-            Color bg = moveSlots[i] != MovementAbility.None
-                ? new Color(0.2f, 0.5f, 1f, 0.7f)
-                : new Color(0.2f, 0.2f, 0.2f, 0.55f);
-            GUI.color = bg;
-            GUI.DrawTexture(new Rect(sx, y + 18f, slotW, slotH), Texture2D.whiteTexture);
-            GUI.color = Color.white;
-            GUI.Label(new Rect(sx, y + 18f, slotW, slotH), MoveName(moveSlots[i]), labelStyle);
+            GUI.color = onCooldown ? new Color(0.3f, 0.3f, 0.3f, 0.7f) : Color.white;
+            GUI.DrawTexture(r, icon);
         }
 
-        // 必殺技スロット
-        float rx = x + MoveSlotCount * (slotW + gap) + 18f;
-        GUI.Label(new Rect(rx, y, 80f, 16f), "必殺技 [R]", titleStyle);
+        // クールダウンオーバーレイ（上から塗りつぶし）
+        if (onCooldown && maxCd > 0f)
+        {
+            float ratio = cd / maxCd;
+            GUI.color = new Color(0f, 0f, 0f, 0.6f);
+            GUI.DrawTexture(new Rect(r.x, r.y, r.width, r.height * ratio), Texture2D.whiteTexture);
 
-        Color spBg = specialSlot != SpecialAbility.None
-            ? new Color(0.7f, 0.1f, 0.9f, 0.7f)
-            : new Color(0.2f, 0.2f, 0.2f, 0.55f);
-        GUI.color = spBg;
-        GUI.DrawTexture(new Rect(rx, y + 18f, slotW, slotH), Texture2D.whiteTexture);
+            GUI.color = Color.white;
+            var style = new GUIStyle(GUI.skin.label)
+            {
+                fontSize  = 13,
+                fontStyle = FontStyle.Bold,
+                alignment = TextAnchor.MiddleCenter,
+                normal    = { textColor = Color.white }
+            };
+            GUI.Label(r, $"{cd:F1}", style);
+        }
+
+        // 枠線
+        GUI.color = filled
+            ? new Color(1f, 1f, 1f, 0.5f)
+            : new Color(0.4f, 0.4f, 0.4f, 0.5f);
+        float b = 2f;
+        GUI.DrawTexture(new Rect(r.x,         r.y,          r.width, b),       Texture2D.whiteTexture);
+        GUI.DrawTexture(new Rect(r.x,         r.yMax - b,   r.width, b),       Texture2D.whiteTexture);
+        GUI.DrawTexture(new Rect(r.x,         r.y,          b,       r.height), Texture2D.whiteTexture);
+        GUI.DrawTexture(new Rect(r.xMax - b,  r.y,          b,       r.height), Texture2D.whiteTexture);
+
         GUI.color = Color.white;
-
-        string spLabel = SpecialName(specialSlot);
-        if (specialSlot != SpecialAbility.None && specialCooldown > 0f)
-        {
-            float pct = 1f - specialCooldown / MaxSpecialCooldown;
-            GUI.color = new Color(0.4f, 0.4f, 0.4f, 0.8f);
-            GUI.DrawTexture(new Rect(rx, y + 18f + slotH * pct, slotW, slotH * (1f - pct)), Texture2D.whiteTexture);
-            GUI.color = Color.white;
-            spLabel = $"CT {specialCooldown:F1}s";
-        }
-        GUI.Label(new Rect(rx, y + 18f, slotW, slotH), spLabel, labelStyle);
     }
 
     public static string MoveName(MovementAbility a) => a switch
