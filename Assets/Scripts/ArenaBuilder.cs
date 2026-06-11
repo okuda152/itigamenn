@@ -16,6 +16,8 @@ public class ArenaBuilder : MonoBehaviour
         BuildArena();
         SpawnPlayer();
 
+        new GameObject("AbilitySelectUI").AddComponent<AbilitySelectUI>();
+
         var bmGO = new GameObject("BossManager");
         var bm   = bmGO.AddComponent<BossManager>();
         bm.arenaWidth  = arenaWidth;
@@ -82,6 +84,7 @@ public class ArenaBuilder : MonoBehaviour
         var ctrl = player.AddComponent<PlayerController>();
         var combat = player.AddComponent<PlayerCombat>();
         player.AddComponent<PlayerHealth>();
+        player.AddComponent<AbilityManager>();
 
         var figGO = new GameObject("PlayerFigure");
         figGO.transform.SetParent(player.transform);

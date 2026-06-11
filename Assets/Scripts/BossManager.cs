@@ -28,8 +28,62 @@ public class BossManager : MonoBehaviour
 
     // ---- Event handlers ----
 
-    void OnDinoDied()     => StartCoroutine(Transition(SpawnButterflyBoss, "N E X T  B O S S"));
-    void OnButterflyDied() => StartCoroutine(ClearSequence());
+    void OnDinoDied()      => ShowAbilitySelect(DinoOffers(),      () => StartCoroutine(Transition(SpawnButterflyBoss, "N E X T  B O S S")));
+    void OnButterflyDied() => ShowAbilitySelect(ButterflyOffers(), () => StartCoroutine(ClearSequence()));
+
+    void ShowAbilitySelect(AbilitySelectUI.AbilityOffer[] offers, System.Action callback)
+    {
+        var player = GameObject.FindWithTag("Player");
+        var am = player?.GetComponent<AbilityManager>();
+        if (AbilitySelectUI.Instance != null && am != null)
+            AbilitySelectUI.Instance.Show(offers, am, callback);
+        else
+            callback();
+    }
+
+    AbilitySelectUI.AbilityOffer[] DinoOffers() => new[]
+    {
+        new AbilitySelectUI.AbilityOffer
+        {
+            name       = "移動速度強化",
+            desc       = "移動速度が 1.5倍 になる。\n恐竜の力強さを奪え。",
+            slotLabel  = "移動強化スロット",
+            isMovement = true,
+            movement   = MovementAbility.SpeedBoost,
+            color      = new Color(1f, 0.5f, 0.1f)
+        },
+        new AbilitySelectUI.AbilityOffer
+        {
+            name       = "亜空間タックル",
+            desc       = "Rキーで高速突進し\n接触した敵にダメージ。\n恐竜の突撃を奪え。",
+            slotLabel  = "必殺技スロット [R]",
+            isMovement = false,
+            special    = SpecialAbility.SubspaceTackle,
+            color      = new Color(0.5f, 0.1f, 1f)
+        }
+    };
+
+    AbilitySelectUI.AbilityOffer[] ButterflyOffers() => new[]
+    {
+        new AbilitySelectUI.AbilityOffer
+        {
+            name       = "二段ジャンプ",
+            desc       = "空中でもう一度\nジャンプできる。\n蝶の飛翔力を奪え。",
+            slotLabel  = "移動強化スロット",
+            isMovement = true,
+            movement   = MovementAbility.DoubleJump,
+            color      = new Color(0.2f, 0.8f, 1f)
+        },
+        new AbilitySelectUI.AbilityOffer
+        {
+            name       = "弾幕攻撃",
+            desc       = "Rキーで前方に\n5発の弾を放つ。\n蝶の乱射を奪え。",
+            slotLabel  = "必殺技スロット [R]",
+            isMovement = false,
+            special    = SpecialAbility.BulletBarrage,
+            color      = new Color(0.2f, 1f, 0.4f)
+        }
+    };
 
     IEnumerator ClearSequence()
     {

@@ -8,6 +8,7 @@ public class PlayerHealth : MonoBehaviour
 
     float hp;
     bool  isDead = false;
+    bool  isInvincible = false;
     float damageFlash = 0f;
     StickFigureRenderer  figure;
 
@@ -25,9 +26,18 @@ public class PlayerHealth : MonoBehaviour
         if (damageFlash > 0f) damageFlash -= Time.deltaTime * 4f;
     }
 
+    public void SetInvincible(float duration) => StartCoroutine(InvincibleCo(duration));
+
+    IEnumerator InvincibleCo(float d)
+    {
+        isInvincible = true;
+        yield return new WaitForSeconds(d);
+        isInvincible = false;
+    }
+
     public void TakeDamage(float amount)
     {
-        if (isDead) return;
+        if (isDead || isInvincible) return;
         hp = Mathf.Max(0f, hp - amount);
         damageFlash = 1f;
         if (!figure) figure = GetComponentInChildren<StickFigureRenderer>();
