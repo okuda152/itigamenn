@@ -17,7 +17,7 @@ public class AbilityManager : MonoBehaviour
     Rigidbody2D      rb;
     bool             doubleJumpUsed = false;
     float            specialCooldown = 0f;
-    const float      TACKLE_CD = 3f;
+    const float      TACKLE_CD = 10f;
     const float      BARRAGE_CD = 2f;
 
     public MovementAbility[] MoveSlots   => moveSlots;
