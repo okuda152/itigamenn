@@ -116,7 +116,7 @@ public class AbilityManager : MonoBehaviour
         while (elapsed < 0.3f)
         {
             elapsed += Time.deltaTime;
-            foreach (var c in Physics2D.OverlapCircleAll((Vector2)transform.position, 2.0f))
+            foreach (var c in Physics2D.OverlapCircleAll((Vector2)transform.position, 4.0f))
             {
                 if (c.gameObject == gameObject || hit.Contains(c.gameObject)) continue;
                 var dmg = c.GetComponent<IDamageable>();
