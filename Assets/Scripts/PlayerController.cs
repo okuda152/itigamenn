@@ -22,7 +22,8 @@ public class PlayerController : MonoBehaviour
     public bool   IsGrounded     { get; private set; }
     public bool   IsWallSliding  { get; private set; }
     public bool   FacingRight    { get; private set; } = true;
-    public float  SpeedMultiplier { get; set; } = 1f;
+    public float  SpeedMultiplier   { get; set; } = 1f;
+    public bool   LockMovement      { get; set; } = false;
 
     bool  isTouchingWall;
     int   wallSide;
@@ -103,8 +104,7 @@ public class PlayerController : MonoBehaviour
 
     void Move()
     {
-        // クールダウン中は入力で水平速度を上書きしない（キックの勢いをそのまま維持）
-        if (wallKickCooldownTimer > 0f) return;
+        if (wallKickCooldownTimer > 0f || LockMovement) return;
 
         float vx = MoveInput * moveSpeed * SpeedMultiplier;
         if (IsWallSliding && MoveInput * wallSide > 0f) vx = 0f;

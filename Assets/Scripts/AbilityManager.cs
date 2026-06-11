@@ -107,6 +107,7 @@ public class AbilityManager : MonoBehaviour
         if (ph) ph.SetInvincible(0.5f);
 
         float dir = ctrl.FacingRight ? 1f : -1f;
+        ctrl.LockMovement = true;
         rb.linearVelocity = new Vector2(dir * 24f, rb.linearVelocity.y * 0.2f);
         EffectManager.HitSpark((Vector2)transform.position, new Color(0.5f, 0.1f, 1f));
 
@@ -127,6 +128,7 @@ public class AbilityManager : MonoBehaviour
             }
             yield return null;
         }
+        ctrl.LockMovement = false;
         rb.linearVelocity = new Vector2(rb.linearVelocity.x * 0.35f, rb.linearVelocity.y);
     }
 
