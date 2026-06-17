@@ -18,6 +18,8 @@ public class ArenaBuilder : MonoBehaviour
 
         new GameObject("AbilitySelectUI").AddComponent<AbilitySelectUI>();
 
+        SpawnSandbag(); // ← テスト終わったらこの行を消す
+
         var bmGO = new GameObject("BossManager");
         var bm   = bmGO.AddComponent<BossManager>();
         bm.arenaWidth  = arenaWidth;
@@ -91,6 +93,33 @@ public class ArenaBuilder : MonoBehaviour
         figGO.transform.localPosition = new Vector3(0f, 0.0f, 0f);
         var fig = figGO.AddComponent<PlayerSpriteAnimator>();
         fig.Init("Player/DrawCharacter", ctrl);
+    }
+
+    // ---- Sandbag (テスト用) ----
+
+    void SpawnSandbag()
+    {
+        float groundY = -arenaHeight * 0.5f + 2f;
+        var go = new GameObject("Sandbag");
+        go.transform.position = new Vector3(3f, groundY, 0f);
+
+        var rb = go.AddComponent<Rigidbody2D>();
+        rb.freezeRotation = true;
+        rb.gravityScale   = 3f;
+        rb.constraints    = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
+
+        var col  = go.AddComponent<CapsuleCollider2D>();
+        col.size   = new Vector2(1f, 2f);
+        col.offset = new Vector2(0f, 0.2f);
+
+        go.AddComponent<SandbagBoss>();
+
+        // 見た目（茶色い丸太っぽい矩形）
+        var sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = CreatePixelSprite();
+        sr.color  = new Color(0.55f, 0.35f, 0.15f);
+        sr.transform.localScale = new Vector3(1f, 2f, 1f);
+        sr.sortingOrder = 1;
     }
 
     // ---- Util ----
