@@ -17,6 +17,10 @@ public class BossManager : MonoBehaviour
     {
         BossDummy.OnDied     += OnDinoDied;
         ButterflyBoss.OnDied += OnButterflyDied;
+
+        var sandbag = GameObject.Find("Sandbag");
+        if (sandbag) Destroy(sandbag);
+
         SpawnButterflyBoss();
     }
 
