@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 public class AbilitySelectUI : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class AbilitySelectUI : MonoBehaviour
         public string          name;
         public string          desc;
         public string          slotLabel;
+        public string          iconName;
         public bool            isMovement;
         public MovementAbility movement;
         public SpecialAbility  special;
@@ -20,12 +22,17 @@ public class AbilitySelectUI : MonoBehaviour
     AbilityManager abilityMgr;
     Action         onDone;
 
-    bool             isShowing  = false;
-    bool             swapPhase  = false;
-    MovementAbility  pendingMovement;
+    bool            isShowing  = false;
+    bool            swapPhase  = false;
+    MovementAbility pendingMovement;
+    MovementAbility pendingNewMovement;
 
-    const float CARD_W = 270f;
-    const float CARD_H = 210f;
+    const float ICON_SIZE = 120f;
+    const float CARD_W    = 150f;
+    const float CARD_H    = 175f;
+    const float CARD_GAP  = 50f;
+
+    static readonly Dictionary<string, Texture2D> iconCache = new();
 
     void Awake() => Instance = this;
 
@@ -46,6 +53,17 @@ public class AbilitySelectUI : MonoBehaviour
         onDone?.Invoke();
     }
 
+    static Texture2D LoadIcon(string name)
+    {
+        if (string.IsNullOrEmpty(name)) return null;
+        if (!iconCache.TryGetValue(name, out var tex))
+        {
+            tex = Resources.Load<Texture2D>($"SkillIcons/{name}");
+            iconCache[name] = tex;
+        }
+        return tex;
+    }
+
     void OnGUI()
     {
         if (!isShowing) return;
@@ -53,7 +71,7 @@ public class AbilitySelectUI : MonoBehaviour
         int sw = Screen.width;
         int sh = Screen.height;
 
-        GUI.color = new Color(0f, 0f, 0f, 0.8f);
+        GUI.color = new Color(0f, 0f, 0f, 0.75f);
         GUI.DrawTexture(new Rect(0, 0, sw, sh), Texture2D.whiteTexture);
         GUI.color = Color.white;
 
@@ -63,69 +81,60 @@ public class AbilitySelectUI : MonoBehaviour
 
     void DrawChoicePhase(int sw, int sh)
     {
-        var titleStyle = new GUIStyle(GUI.skin.label)
-        {
-            fontSize  = 28,
-            fontStyle = FontStyle.Bold,
-            alignment = TextAnchor.MiddleCenter,
-            normal    = { textColor = Color.white }
-        };
-        GUI.Label(new Rect(0, sh * 0.1f, sw, 50f), "ボス撃破！　能力を奪え", titleStyle);
-
-        float totalW = CARD_W * offers.Length + 40f * (offers.Length - 1);
+        float totalW = CARD_W * offers.Length + CARD_GAP * (offers.Length - 1);
         float startX = (sw - totalW) * 0.5f;
-        float cardY  = sh * 0.25f;
+        float cardY  = (sh - CARD_H) * 0.5f;
 
         for (int i = 0; i < offers.Length; i++)
-            DrawCard(offers[i], new Rect(startX + i * (CARD_W + 40f), cardY, CARD_W, CARD_H));
+        {
+            var r = new Rect(startX + i * (CARD_W + CARD_GAP), cardY, CARD_W, CARD_H);
+            if (DrawCard(offers[i], r))
+                OnSelect(offers[i]);
+        }
     }
 
-    void DrawCard(AbilityOffer offer, Rect r)
+    // returns true if clicked
+    bool DrawCard(AbilityOffer offer, Rect r)
     {
-        GUI.color = new Color(offer.color.r, offer.color.g, offer.color.b, 0.22f);
+        bool hover = r.Contains(Event.current.mousePosition);
+
+        // 背景
+        GUI.color = hover
+            ? new Color(offer.color.r, offer.color.g, offer.color.b, 0.3f)
+            : new Color(0f, 0f, 0f, 0.45f);
         GUI.DrawTexture(r, Texture2D.whiteTexture);
 
-        // border lines
-        GUI.color = new Color(offer.color.r, offer.color.g, offer.color.b, 0.9f);
-        GUI.DrawTexture(new Rect(r.x,        r.y,        r.width, 2f),    Texture2D.whiteTexture);
-        GUI.DrawTexture(new Rect(r.x,        r.yMax - 2f, r.width, 2f),   Texture2D.whiteTexture);
-        GUI.DrawTexture(new Rect(r.x,        r.y,        2f,    r.height), Texture2D.whiteTexture);
-        GUI.DrawTexture(new Rect(r.xMax - 2f, r.y,       2f,    r.height), Texture2D.whiteTexture);
-        GUI.color = Color.white;
+        // アイコン
+        var icon = LoadIcon(offer.iconName);
+        float iconPad = (CARD_W - ICON_SIZE) * 0.5f;
+        var iconRect = new Rect(r.x + iconPad, r.y + 14f, ICON_SIZE, ICON_SIZE);
+        if (icon != null)
+        {
+            GUI.color = Color.white;
+            GUI.DrawTexture(iconRect, icon);
+        }
 
+        // 能力名
         var nameStyle = new GUIStyle(GUI.skin.label)
-        {
-            fontSize  = 20,
-            fontStyle = FontStyle.Bold,
-            alignment = TextAnchor.MiddleCenter,
-            normal    = { textColor = Color.white }
-        };
-        GUI.Label(new Rect(r.x, r.y + 14f, r.width, 34f), offer.name, nameStyle);
-
-        var slotStyle = new GUIStyle(GUI.skin.label)
-        {
-            fontSize  = 11,
-            alignment = TextAnchor.MiddleCenter,
-            normal    = { textColor = new Color(offer.color.r, offer.color.g, offer.color.b) }
-        };
-        GUI.Label(new Rect(r.x, r.y + 48f, r.width, 20f), offer.slotLabel, slotStyle);
-
-        var descStyle = new GUIStyle(GUI.skin.label)
-        {
-            fontSize  = 13,
-            alignment = TextAnchor.UpperCenter,
-            wordWrap  = true,
-            normal    = { textColor = new Color(0.88f, 0.88f, 0.88f) }
-        };
-        GUI.Label(new Rect(r.x + 14f, r.y + 72f, r.width - 28f, 90f), offer.desc, descStyle);
-
-        var btnStyle = new GUIStyle(GUI.skin.button)
         {
             fontSize  = 16,
             fontStyle = FontStyle.Bold,
+            alignment = TextAnchor.MiddleCenter,
+            normal    = { textColor = Color.white }
         };
-        if (GUI.Button(new Rect(r.x + 28f, r.yMax - 52f, r.width - 56f, 38f), "奪う", btnStyle))
-            OnSelect(offer);
+        GUI.color = Color.white;
+        GUI.Label(new Rect(r.x, iconRect.yMax + 8f, r.width, 30f), offer.name, nameStyle);
+
+        // 枠線
+        float bw = hover ? 3f : 2f;
+        GUI.color = new Color(offer.color.r, offer.color.g, offer.color.b, hover ? 1f : 0.6f);
+        GUI.DrawTexture(new Rect(r.x,          r.y,          r.width, bw),       Texture2D.whiteTexture);
+        GUI.DrawTexture(new Rect(r.x,          r.yMax - bw,  r.width, bw),       Texture2D.whiteTexture);
+        GUI.DrawTexture(new Rect(r.x,          r.y,          bw,      r.height), Texture2D.whiteTexture);
+        GUI.DrawTexture(new Rect(r.xMax - bw,  r.y,          bw,      r.height), Texture2D.whiteTexture);
+        GUI.color = Color.white;
+
+        return Event.current.type == EventType.MouseDown && hover;
     }
 
     void OnSelect(AbilityOffer offer)
@@ -139,7 +148,7 @@ public class AbilitySelectUI : MonoBehaviour
             }
             else
             {
-                pendingMovement = offer.movement;
+                pendingNewMovement = offer.movement;
                 swapPhase = true;
             }
         }
@@ -152,37 +161,48 @@ public class AbilitySelectUI : MonoBehaviour
 
     void DrawSwapPhase(int sw, int sh)
     {
-        var titleStyle = new GUIStyle(GUI.skin.label)
-        {
-            fontSize  = 20,
-            fontStyle = FontStyle.Bold,
-            alignment = TextAnchor.MiddleCenter,
-            normal    = { textColor = Color.white }
-        };
-        GUI.Label(new Rect(0, sh * 0.22f, sw, 40f), "移動強化スロットが満杯　どれを捨てる？", titleStyle);
+        var slots = abilityMgr.MoveSlots;
 
-        var slots  = abilityMgr.MoveSlots;
-        float btnW = 220f;
-        float btnH = 56f;
-        float total = btnW * (slots.Length + 1) + 24f * slots.Length;
-        float sx    = (sw - total) * 0.5f;
-        float btnY  = sh * 0.4f;
+        float totalW = CARD_W * (slots.Length + 1) + CARD_GAP * slots.Length;
+        float startX = (sw - totalW) * 0.5f;
+        float cardY  = (sh - CARD_H) * 0.5f;
 
-        var btnStyle = new GUIStyle(GUI.skin.button) { fontSize = 15 };
-
+        // 既存スロットを表示 → クリックで差し替え
         for (int i = 0; i < slots.Length; i++)
         {
-            float bx = sx + i * (btnW + 24f);
-            if (GUI.Button(new Rect(bx, btnY, btnW, btnH),
-                $"捨てる: {AbilityManager.MoveName(slots[i])}", btnStyle))
+            var offer = MakeSwapOffer(slots[i]);
+            var r = new Rect(startX + i * (CARD_W + CARD_GAP), cardY, CARD_W, CARD_H);
+            if (DrawCard(offer, r))
             {
-                abilityMgr.ReplaceMovementAbility(i, pendingMovement);
+                abilityMgr.ReplaceMovementAbility(i, pendingNewMovement);
                 Close();
             }
         }
 
-        float cancelX = sx + slots.Length * (btnW + 24f);
-        if (GUI.Button(new Rect(cancelX, btnY, btnW, btnH), "諦める", btnStyle))
-            Close();
+        // 諦めるカード
+        var cancelOffer = new AbilityOffer
+        {
+            name     = "諦める",
+            iconName = null,
+            color    = new Color(0.5f, 0.5f, 0.5f)
+        };
+        var cancelR = new Rect(startX + slots.Length * (CARD_W + CARD_GAP), cardY, CARD_W, CARD_H);
+        if (DrawCard(cancelOffer, cancelR)) Close();
     }
+
+    static AbilityOffer MakeSwapOffer(MovementAbility a) => new AbilityOffer
+    {
+        name       = AbilityManager.MoveName(a),
+        iconName   = MoveIcon(a),
+        isMovement = true,
+        movement   = a,
+        color      = new Color(0.9f, 0.3f, 0.2f)
+    };
+
+    static string MoveIcon(MovementAbility a) => a switch
+    {
+        MovementAbility.SpeedBoost => "UI_Skill_Icon_Buff",
+        MovementAbility.DoubleJump => "UI_Skill_Icon_Fly",
+        _                          => null
+    };
 }

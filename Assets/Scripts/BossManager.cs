@@ -49,8 +49,7 @@ public class BossManager : MonoBehaviour
         new AbilitySelectUI.AbilityOffer
         {
             name       = "移動速度強化",
-            desc       = "移動速度が 1.5倍 になる。\n恐竜の力強さを奪え。",
-            slotLabel  = "移動強化スロット",
+            iconName   = "UI_Skill_Icon_Buff",
             isMovement = true,
             movement   = MovementAbility.SpeedBoost,
             color      = new Color(1f, 0.5f, 0.1f)
@@ -58,8 +57,7 @@ public class BossManager : MonoBehaviour
         new AbilitySelectUI.AbilityOffer
         {
             name       = "亜空間タックル",
-            desc       = "Rキーで高速突進し\n接触した敵にダメージ。\n恐竜の突撃を奪え。",
-            slotLabel  = "必殺技スロット [R]",
+            iconName   = "UI_Skill_Icon_Blackhole",
             isMovement = false,
             special    = SpecialAbility.SubspaceTackle,
             color      = new Color(0.5f, 0.1f, 1f)
@@ -71,8 +69,7 @@ public class BossManager : MonoBehaviour
         new AbilitySelectUI.AbilityOffer
         {
             name       = "二段ジャンプ",
-            desc       = "空中でもう一度\nジャンプできる。\n蝶の飛翔力を奪え。",
-            slotLabel  = "移動強化スロット",
+            iconName   = "UI_Skill_Icon_Fly",
             isMovement = true,
             movement   = MovementAbility.DoubleJump,
             color      = new Color(0.2f, 0.8f, 1f)
@@ -80,8 +77,7 @@ public class BossManager : MonoBehaviour
         new AbilitySelectUI.AbilityOffer
         {
             name       = "弾幕攻撃",
-            desc       = "Rキーで前方に\n5発の弾を放つ。\n蝶の乱射を奪え。",
-            slotLabel  = "必殺技スロット [R]",
+            iconName   = "UI_Skill_Icon_Arrow_Barrage",
             isMovement = false,
             special    = SpecialAbility.BulletBarrage,
             color      = new Color(0.2f, 1f, 0.4f)
