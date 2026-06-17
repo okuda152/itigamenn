@@ -1,8 +1,10 @@
 using UnityEngine;
+using System;
 
-// テスト用サンドバッグ。確認が終わったら ArenaBuilder の SpawnSandbag() 呼び出し行を消すこと。
 public class SandbagBoss : MonoBehaviour, IDamageable
 {
+    public static event Action OnDied;
+
     public float maxHP = 300f;
     float hp;
     bool dead = false;
@@ -21,6 +23,7 @@ public class SandbagBoss : MonoBehaviour, IDamageable
     {
         dead = true;
         EffectManager.DeathBurst(transform.position, new Color(0.8f, 0.5f, 0.1f));
+        OnDied?.Invoke();
         Destroy(gameObject);
     }
 
@@ -28,7 +31,6 @@ public class SandbagBoss : MonoBehaviour, IDamageable
     {
         if (dead) return;
 
-        // HPバー（頭上）
         var cam = Camera.main;
         if (cam == null) return;
         Vector3 screen = cam.WorldToScreenPoint(transform.position + Vector3.up * 1.6f);

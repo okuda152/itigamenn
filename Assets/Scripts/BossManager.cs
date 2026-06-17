@@ -17,10 +17,7 @@ public class BossManager : MonoBehaviour
     {
         BossDummy.OnDied     += OnDinoDied;
         ButterflyBoss.OnDied += OnButterflyDied;
-
-        var sandbag = GameObject.Find("Sandbag");
-        if (sandbag) Destroy(sandbag);
-
+        SandbagBoss.OnDied   += OnSandbagDied;
         SpawnButterflyBoss();
     }
 
@@ -28,12 +25,14 @@ public class BossManager : MonoBehaviour
     {
         BossDummy.OnDied     -= OnDinoDied;
         ButterflyBoss.OnDied -= OnButterflyDied;
+        SandbagBoss.OnDied   -= OnSandbagDied;
     }
 
     // ---- Event handlers ----
 
-    void OnDinoDied()      => ShowAbilitySelect(DinoOffers(),      () => StartCoroutine(ClearSequence()));
-    void OnButterflyDied() => ShowAbilitySelect(ButterflyOffers(), () => StartCoroutine(Transition(SpawnDinoBoss, "N E X T  B O S S")));
+    void OnDinoDied()      => ShowAbilitySelect(DinoOffers(),      () => StartCoroutine(Transition(SpawnSandbagBoss, "N E X T  B O S S")));
+    void OnButterflyDied() => ShowAbilitySelect(ButterflyOffers(), () => StartCoroutine(Transition(SpawnDinoBoss,     "N E X T  B O S S")));
+    void OnSandbagDied()   => StartCoroutine(ClearSequence());
 
     void ShowAbilitySelect(AbilitySelectUI.AbilityOffer[] offers, System.Action callback)
     {
@@ -170,6 +169,39 @@ public class BossManager : MonoBehaviour
         figGO.transform.localPosition = new Vector3(0f, 0.1f, 0f);
         var vis = figGO.AddComponent<FantasyCharacterVisual>();
         vis.Init("Characters/Character (71)", scale: 1.5f);
+    }
+
+    void SpawnSandbagBoss()
+    {
+        float groundY = -arenaHeight * 0.5f + 2f;
+        var go = new GameObject("Sandbag");
+        go.transform.position = new Vector3(4f, groundY, 0f);
+
+        var rb = go.AddComponent<Rigidbody2D>();
+        rb.freezeRotation = true;
+        rb.gravityScale   = 3f;
+        rb.constraints    = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
+
+        var col    = go.AddComponent<CapsuleCollider2D>();
+        col.size   = new Vector2(1f, 2f);
+        col.offset = new Vector2(0f, 0.2f);
+
+        go.AddComponent<SandbagBoss>();
+
+        var figGO = new GameObject("SandbagFigure");
+        figGO.transform.SetParent(go.transform);
+        figGO.transform.localPosition = Vector3.zero;
+
+        var tex = new Texture2D(1, 1);
+        tex.SetPixel(0, 0, Color.white);
+        tex.Apply();
+        var sprite = Sprite.Create(tex, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f), 1f);
+
+        var sr = figGO.AddComponent<SpriteRenderer>();
+        sr.sprite = sprite;
+        sr.color  = new Color(0.55f, 0.35f, 0.15f);
+        figGO.transform.localScale = new Vector3(1f, 2f, 1f);
+        sr.sortingOrder = 1;
     }
 
     // ---- UI ----
