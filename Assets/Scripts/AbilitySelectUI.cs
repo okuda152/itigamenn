@@ -29,7 +29,7 @@ public class AbilitySelectUI : MonoBehaviour
 
     const float ICON_SIZE = 120f;
     const float CARD_W    = 150f;
-    const float CARD_H    = 175f;
+    const float CARD_H    = 190f;
     const float CARD_GAP  = 50f;
 
     static readonly Dictionary<string, Texture2D> iconCache = new();
@@ -123,7 +123,20 @@ public class AbilitySelectUI : MonoBehaviour
             normal    = { textColor = Color.white }
         };
         GUI.color = Color.white;
-        GUI.Label(new Rect(r.x, iconRect.yMax + 8f, r.width, 30f), offer.name, nameStyle);
+        GUI.Label(new Rect(r.x, iconRect.yMax + 6f, r.width, 26f), offer.name, nameStyle);
+
+        // パッシブ / R キー ラベル
+        if (!string.IsNullOrEmpty(offer.name))
+        {
+            var tagStyle = new GUIStyle(GUI.skin.label)
+            {
+                fontSize  = 11,
+                alignment = TextAnchor.MiddleCenter,
+                normal    = { textColor = new Color(offer.color.r, offer.color.g, offer.color.b, 0.9f) }
+            };
+            string tag = offer.isMovement ? "パッシブ" : "R キー";
+            GUI.Label(new Rect(r.x, iconRect.yMax + 32f, r.width, 20f), tag, tagStyle);
+        }
 
         // 枠線
         float bw = hover ? 3f : 2f;
