@@ -51,7 +51,7 @@ public class BackgroundDecorator : MonoBehaviour
         for (int i = 0; i < tileCount; i++)
         {
             string tileName = groundTiles[i % groundTiles.Length];
-            PlaceGrounded(tileName, tileStartX + i, groundY, scale: 1f, order: 1);
+            PlaceGrounded(tileName, tileStartX + i, groundY - 0.4f, scale: 1f, order: 1);
         }
 
         // ---- 石 ----
