@@ -20,9 +20,8 @@ public class BackgroundDecorator : MonoBehaviour
 
         float hw      = arenaWidth  * 0.5f;
         float hh      = arenaHeight * 0.5f;
-        float groundY = -hh + 0.75f;   // 床壁の上端
+        float groundY = -hh + 0.75f;  // 床壁の上端 = プレイヤーが立つ面
 
-        // カメラ背景色を空色に
         if (Camera.main) Camera.main.backgroundColor = new Color(0.45f, 0.72f, 0.88f);
 
         // ---- 背景パネル ----
@@ -31,7 +30,7 @@ public class BackgroundDecorator : MonoBehaviour
         for (int i = 0; i < bgPick.Length; i++)
             PlaceGrounded(bgPick[i], bgX[i], groundY, scale: 1.1f, order: -20);
 
-        // ---- 奥の木（小さく・薄め） ----
+        // ---- 奥の木 ----
         PlaceGrounded("Tree5", -hw + 4f, groundY, scale: 0.75f, order: -15, color: new Color(0.75f, 0.82f, 0.75f));
         PlaceGrounded("Tree3",  hw - 4f, groundY, scale: 0.75f, order: -15, color: new Color(0.75f, 0.82f, 0.75f), flipX: true);
         PlaceGrounded("Tree4",  0f,      groundY, scale: 0.65f, order: -16, color: new Color(0.78f, 0.84f, 0.78f));
@@ -42,18 +41,31 @@ public class BackgroundDecorator : MonoBehaviour
         PlaceGrounded("Tree6", -hw + 3.5f, groundY, scale: 0.9f,  order: -9);
         PlaceGrounded("Tree7",  hw - 3.5f, groundY, scale: 0.9f,  order: -9, flipX: true);
 
-        // ---- 霧オーバーレイ（プレイヤー視認性確保） ----
+        // ---- 霧オーバーレイ ----
         AddColoredRect("BG_Overlay", 0f, 0f, arenaWidth, arenaHeight * 2f,
                        new Color(0.82f, 0.88f, 0.82f, 0.78f), -6);
 
-        // ---- 草ストリップ（床の上端にぴったり重ねる） ----
-        // groundY が床壁上端なので、高さ 0.3 の帯の中心を groundY + 0.15 に置く
-        AddColoredRect("BG_Grass", 0f, groundY + 0.15f, arenaWidth + 3f, 0.3f,
-                       new Color(0.22f, 0.55f, 0.12f), 1);
+        // ---- 地面タイル ----
+        // 1x1 ワールド単位のタイルを「上端が groundY」になるよう配置
+        // → center = groundY - 0.5
+        int   tileCount  = Mathf.CeilToInt(arenaWidth) + 4;
+        float tileStartX = -hw - 1.5f;
 
-        // 草の上の細い明るい線（ハイライト）
-        AddColoredRect("BG_GrassHL", 0f, groundY + 0.28f, arenaWidth + 3f, 0.06f,
-                       new Color(0.38f, 0.75f, 0.22f), 2);
+        // 草（上段）: TileGround1-5
+        string[] grassRow = { "TileGround1","TileGround2","TileGround3","TileGround4","TileGround5" };
+        for (int i = 0; i < tileCount; i++)
+            PlaceAt(grassRow[i % grassRow.Length],
+                    new Vector3(tileStartX + i, groundY - 0.5f, 0f), order: 2);
+
+        // 土（下段 × 2行）: TileGround6-10
+        string[] dirtRow = { "TileGround6","TileGround7","TileGround8","TileGround9","TileGround10" };
+        for (int row = 1; row <= 2; row++)
+        {
+            float rowCenterY = groundY - 0.5f - row;
+            for (int i = 0; i < tileCount; i++)
+                PlaceAt(dirtRow[i % dirtRow.Length],
+                        new Vector3(tileStartX + i, rowCenterY, 0f), order: 2);
+        }
 
         // ---- 石 ----
         PlaceGrounded("Stone1", -hw + 2.2f, groundY, scale: 0.8f, order: 3);
@@ -69,6 +81,22 @@ public class BackgroundDecorator : MonoBehaviour
         PlaceGrounded("Plant3",  hw - 1.2f, groundY, scale: 0.7f,  order: 4, flipX: true);
         PlaceGrounded("Plant5",  hw - 4.0f, groundY, scale: 0.65f, order: 4, flipX: true);
         PlaceGrounded("Plant2",  3.0f,      groundY, scale: 0.55f, order: 4, flipX: true);
+    }
+
+    // 指定の中心座標に配置（タイルなど正確な位置指定が必要な場合）
+    void PlaceAt(string spriteName, Vector3 center, float scale = 1f, int order = 0, bool flipX = false)
+    {
+        if (!sprites.TryGetValue(spriteName, out var sprite)) return;
+
+        var go = new GameObject($"BG_{spriteName}");
+        go.transform.SetParent(transform);
+        go.transform.position   = center;
+        go.transform.localScale = Vector3.one * scale;
+
+        var sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite       = sprite;
+        sr.sortingOrder = order;
+        sr.flipX        = flipX;
     }
 
     // スプライトの下端が bottomY に来るよう配置
