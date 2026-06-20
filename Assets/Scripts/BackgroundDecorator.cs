@@ -42,6 +42,18 @@ public class BackgroundDecorator : MonoBehaviour
         // ---- 暗めのオーバーレイ（プレイヤーの視認性確保） ----
         AddOverlay(hw, hh, groundY);
 
+        // ---- 地面タイル（床の上端に敷き詰める） ----
+        // TileGround は 16x16px / 16ppu = 1x1 ワールド単位
+        // 床上端: groundY, タイル上端: groundY なので center は groundY + 0.5
+        string[] groundTiles = { "TileGround1", "TileGround2", "TileGround3", "TileGround4", "TileGround5" };
+        int tileCount = Mathf.CeilToInt(arenaWidth) + 4;
+        float tileStartX = -hw - 1.5f;
+        for (int i = 0; i < tileCount; i++)
+        {
+            string tileName = groundTiles[i % groundTiles.Length];
+            PlaceGrounded(tileName, tileStartX + i, groundY, scale: 1f, order: 1);
+        }
+
         // ---- 石 ----
         PlaceGrounded("Stone1", -hw + 2.2f, groundY, scale: 0.8f, order: -3);
         PlaceGrounded("Stone3", -hw + 5.0f, groundY, scale: 0.6f, order: -3);
