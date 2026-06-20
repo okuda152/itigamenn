@@ -29,9 +29,9 @@ public class BackgroundDecorator : MonoBehaviour
             PlaceGrounded(bgPick[i], bgX[i], groundY, scale: 1.1f, order: -20);
 
         // ---- 奥の木（小さく・暗め） ----
-        PlaceGrounded("Tree5", -hw + 4f,   groundY, scale: 0.75f, order: -15, color: new Color(0.6f, 0.7f, 0.6f));
-        PlaceGrounded("Tree3",  hw - 4f,   groundY, scale: 0.75f, order: -15, color: new Color(0.6f, 0.7f, 0.6f), flipX: true);
-        PlaceGrounded("Tree4",  0f,        groundY, scale: 0.65f, order: -16, color: new Color(0.55f, 0.65f, 0.55f));
+        PlaceGrounded("Tree5", -hw + 4f,   groundY, scale: 0.75f, order: -15, color: new Color(0.75f, 0.82f, 0.75f));
+        PlaceGrounded("Tree3",  hw - 4f,   groundY, scale: 0.75f, order: -15, color: new Color(0.75f, 0.82f, 0.75f), flipX: true);
+        PlaceGrounded("Tree4",  0f,        groundY, scale: 0.65f, order: -16, color: new Color(0.78f, 0.84f, 0.78f));
 
         // ---- 手前の木（大きく） ----
         PlaceGrounded("Tree1", -hw + 0.8f, groundY, scale: 1.05f, order: -8);
@@ -96,6 +96,6 @@ public class BackgroundDecorator : MonoBehaviour
         var sr = go.AddComponent<SpriteRenderer>();
         sr.sprite       = sprite;
         sr.sortingOrder = -6;
-        sr.color        = new Color(0.05f, 0.08f, 0.05f, 0.52f);
+        sr.color        = new Color(0.82f, 0.88f, 0.82f, 0.78f);
     }
 }
