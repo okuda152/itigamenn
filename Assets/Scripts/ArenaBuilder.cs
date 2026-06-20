@@ -18,6 +18,11 @@ public class ArenaBuilder : MonoBehaviour
 
         new GameObject("AbilitySelectUI").AddComponent<AbilitySelectUI>();
 
+        var bgGO = new GameObject("BackgroundDecorator");
+        var bg   = bgGO.AddComponent<BackgroundDecorator>();
+        bg.arenaWidth  = arenaWidth;
+        bg.arenaHeight = arenaHeight;
+
         var bmGO = new GameObject("BossManager");
         var bm   = bmGO.AddComponent<BossManager>();
         bm.arenaWidth  = arenaWidth;
