@@ -48,8 +48,8 @@ public class BackgroundDecorator : MonoBehaviour
         // ---- 地面タイル ----
         // 1x1 ワールド単位のタイルを「上端が groundY」になるよう配置
         // → center = groundY - 0.5
-        int   tileCount  = Mathf.CeilToInt(arenaWidth) + 4;
-        float tileStartX = -hw - 1.5f;
+        int   tileCount  = Mathf.CeilToInt(arenaWidth) + 24;  // 左右に余裕を持って延長
+        float tileStartX = -hw - 12f;
 
         // 草（上段）: 1種類で統一
         for (int i = 0; i < tileCount; i++)
