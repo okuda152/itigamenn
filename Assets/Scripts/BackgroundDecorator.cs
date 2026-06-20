@@ -51,19 +51,17 @@ public class BackgroundDecorator : MonoBehaviour
         int   tileCount  = Mathf.CeilToInt(arenaWidth) + 4;
         float tileStartX = -hw - 1.5f;
 
-        // 草（上段）: TileGround1-5
-        string[] grassRow = { "TileGround1","TileGround2","TileGround3","TileGround4","TileGround5" };
+        // 草（上段）: 1種類で統一
         for (int i = 0; i < tileCount; i++)
-            PlaceAt(grassRow[i % grassRow.Length],
+            PlaceAt("TileGround2",
                     new Vector3(tileStartX + i, groundY - 0.5f, 0f), order: 2);
 
-        // 土（下段 × 2行）: TileGround6-10
-        string[] dirtRow = { "TileGround6","TileGround7","TileGround8","TileGround9","TileGround10" };
+        // 土（下段 × 2行）: 1種類で統一
         for (int row = 1; row <= 2; row++)
         {
             float rowCenterY = groundY - 0.5f - row;
             for (int i = 0; i < tileCount; i++)
-                PlaceAt(dirtRow[i % dirtRow.Length],
+                PlaceAt("TileGround8",
                         new Vector3(tileStartX + i, rowCenterY, 0f), order: 2);
         }
 
