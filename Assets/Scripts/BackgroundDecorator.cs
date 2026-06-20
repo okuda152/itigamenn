@@ -22,7 +22,7 @@ public class BackgroundDecorator : MonoBehaviour
         float hh      = arenaHeight * 0.5f;
         float groundY = -hh + 0.75f;  // 床壁の上端 = プレイヤーが立つ面
 
-        if (Camera.main) Camera.main.backgroundColor = new Color(0.45f, 0.72f, 0.88f);
+        if (Camera.main) Camera.main.backgroundColor = new Color(0.08f, 0.10f, 0.08f);
 
         // ---- 背景パネル ----
         string[] bgPick = { "Background1", "Background3", "Background5" };
