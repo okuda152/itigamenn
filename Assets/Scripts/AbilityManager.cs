@@ -182,10 +182,11 @@ public class AbilityManager : MonoBehaviour
 
     void OnGUI()
     {
-        const float SIZE  = 56f;
-        const float PAD   = 6f;
-        const float LEFT  = 18f;
-        const float TOP   = 18f;
+        const float SIZE      = 56f;
+        const float PAD       = 6f;
+        const float GROUP_GAP = 20f;
+        const float LEFT      = 18f;
+        const float TOP       = 60f;
 
         // 移動スロット x2 → 必殺技スロット x1
         for (int i = 0; i < MoveSlotCount; i++)
@@ -194,7 +195,7 @@ public class AbilityManager : MonoBehaviour
                      moveSlots[i] != MovementAbility.None,
                      false, 0f, 0f);
 
-        float spY = TOP + MoveSlotCount * (SIZE + PAD) + PAD;
+        float spY = TOP + MoveSlotCount * (SIZE + PAD) + GROUP_GAP;
         DrawSlot(new Rect(LEFT, spY, SIZE, SIZE),
                  LoadIcon(SpecialIcon(specialSlot)),
                  specialSlot != SpecialAbility.None,
