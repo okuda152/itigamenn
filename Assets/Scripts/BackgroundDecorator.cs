@@ -77,17 +77,17 @@ public class BackgroundDecorator : MonoBehaviour
                 PlaceAt("TileGround8", new Vector3(ceilStartX + i, hh + 0.5f + row, 0f), order: 2);
 
         // ---- 左右壁タイル ----
-        int   wallRows    = Mathf.CeilToInt(arenaHeight) + 4;
-        float wallBotY    = -hh - 2f;
+        int   wallRows = Mathf.CeilToInt(arenaHeight) + 4;
+        float wallBotY = -hh - 2f;
         for (int row = 0; row < wallRows; row++)
         {
             float y = wallBotY + row;
-            // 左壁: 2列
+            // 左壁: 外側は土、内側エッジは草タイルを-90°回転（草が右=アリーナ側を向く）
             PlaceAt("TileGround8", new Vector3(-hw - 0.5f, y, 0f), order: 2);
-            PlaceAt("TileGround8", new Vector3(-hw + 0.5f, y, 0f), order: 2);
-            // 右壁: 2列
-            PlaceAt("TileGround8", new Vector3(hw - 0.5f, y, 0f), order: 2);
+            PlaceAt("TileGround2", new Vector3(-hw + 0.5f, y, 0f), order: 3, rotZ: -90f);
+            // 右壁: 外側は土、内側エッジは草タイルを+90°回転（草が左=アリーナ側を向く）
             PlaceAt("TileGround8", new Vector3(hw + 0.5f, y, 0f), order: 2);
+            PlaceAt("TileGround2", new Vector3(hw - 0.5f, y, 0f), order: 3, rotZ: 90f);
         }
 
         // ---- 石 ----
@@ -107,7 +107,8 @@ public class BackgroundDecorator : MonoBehaviour
     }
 
     // 指定の中心座標に配置
-    void PlaceAt(string spriteName, Vector3 center, float scale = 1f, int order = 0, bool flipX = false, bool flipY = false)
+    void PlaceAt(string spriteName, Vector3 center, float scale = 1f, int order = 0,
+                 bool flipX = false, bool flipY = false, float rotZ = 0f)
     {
         if (!sprites.TryGetValue(spriteName, out var sprite)) return;
 
@@ -115,6 +116,7 @@ public class BackgroundDecorator : MonoBehaviour
         go.transform.SetParent(transform);
         go.transform.position   = center;
         go.transform.localScale = Vector3.one * scale;
+        if (rotZ != 0f) go.transform.rotation = Quaternion.Euler(0f, 0f, rotZ);
 
         var sr = go.AddComponent<SpriteRenderer>();
         sr.sprite       = sprite;
