@@ -49,10 +49,11 @@ public class ArenaBuilder : MonoBehaviour
         float hh = arenaHeight * 0.5f;
 
         const float wallThick = 1.5f;
-        BuildWall("Floor",     new Vector2(0f,       -hh),  new Vector2(arenaWidth + wallThick * 2f, wallThick), new Color(0.42f, 0.28f, 0.14f));
-        BuildWall("Ceiling",   new Vector2(0f,        hh),  new Vector2(arenaWidth + wallThick * 2f, wallThick));
-        BuildWall("LeftWall",  new Vector2(-hw, 0f),        new Vector2(wallThick, arenaHeight));
-        BuildWall("RightWall", new Vector2( hw, 0f),        new Vector2(wallThick, arenaHeight));
+        var dirt = new Color(0.42f, 0.28f, 0.14f);
+        BuildWall("Floor",     new Vector2(0f,       -hh),  new Vector2(arenaWidth + wallThick * 2f, wallThick), dirt);
+        BuildWall("Ceiling",   new Vector2(0f,        hh),  new Vector2(arenaWidth + wallThick * 2f, wallThick), dirt);
+        BuildWall("LeftWall",  new Vector2(-hw, 0f),        new Vector2(wallThick, arenaHeight), dirt);
+        BuildWall("RightWall", new Vector2( hw, 0f),        new Vector2(wallThick, arenaHeight), dirt);
     }
 
     void BuildWall(string wallName, Vector2 pos, Vector2 size, Color? color = null)
