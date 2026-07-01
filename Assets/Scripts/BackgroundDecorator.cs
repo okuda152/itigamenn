@@ -65,40 +65,6 @@ public class BackgroundDecorator : MonoBehaviour
                         new Vector3(tileStartX + i, rowCenterY, 0f), order: 2);
         }
 
-        // ---- 天井タイル（草を上下反転して天井内側に貼る） ----
-        int   ceilCount  = Mathf.CeilToInt(arenaWidth) + 24;
-        float ceilStartX = -hw - 12f;
-        // 草タイル: flipY=true で草が下向き、center = hh+0.5
-        for (int i = 0; i < ceilCount; i++)
-            PlaceAt("TileGround2", new Vector3(ceilStartX + i, hh + 0.5f, 0f), order: 2, flipY: true);
-        // 土タイル2行
-        for (int row = 1; row <= 2; row++)
-            for (int i = 0; i < ceilCount; i++)
-                PlaceAt("TileGround8", new Vector3(ceilStartX + i, hh + 0.5f + row, 0f), order: 2);
-
-        // ---- 左右壁タイル ----
-        // 左壁内側: 右エッジ系タイル（x=48列: TileGround3=上角, TileGround6=中, TileGround9=下中）
-        // 右壁内側: 左エッジ系タイル（x=16列: TileGround1=上角, TileGround4=中, TileGround7=下中）
-        int   wallRows  = Mathf.CeilToInt(arenaHeight) + 4;
-        float wallBotY  = -hh - 2f;
-        float wallTopY  = hh  + 1f;
-        for (int row = 0; row < wallRows; row++)
-        {
-            float y = wallBotY + row;
-
-            // 左壁
-            PlaceAt("TileGround8", new Vector3(-hw - 0.5f, y, 0f), order: 2);  // 外側（土）
-            float lx = -hw + 0.5f;
-            if (y >= wallTopY - 1f) PlaceAt("TileGround3", new Vector3(lx, y, 0f), order: 3); // 上角（草+右エッジ）
-            else                    PlaceAt("TileGround6", new Vector3(lx, y, 0f), order: 3); // 中（右エッジ土）
-
-            // 右壁
-            PlaceAt("TileGround8", new Vector3(hw + 0.5f, y, 0f), order: 2);   // 外側（土）
-            float rx = hw - 0.5f;
-            if (y >= wallTopY - 1f) PlaceAt("TileGround1", new Vector3(rx, y, 0f), order: 3); // 上角（草+左エッジ）
-            else                    PlaceAt("TileGround4", new Vector3(rx, y, 0f), order: 3); // 中（左エッジ土）
-        }
-
         // ---- 石 ----
         PlaceGrounded("Stone1", -hw + 2.2f, groundY, scale: 0.8f, order: 3);
         PlaceGrounded("Stone3", -hw + 5.0f, groundY, scale: 0.6f, order: 3);
