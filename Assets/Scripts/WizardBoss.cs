@@ -21,9 +21,9 @@ public class WizardBoss : MonoBehaviour, IDamageable
     const float MOVE_SPEED            = 2.5f;
     const float MOVE_INTERVAL         = 2.2f;
     const float SUMMON_INTERVAL       = 2.5f;
-    const float SUMMON_INTERVAL_ENRAGE = 1.0f;
+    const float SUMMON_INTERVAL_ENRAGE = 0.4f;
     const int   MAX_MINIONS           = 6;
-    const int   MAX_MINIONS_ENRAGE    = 10;
+    const int   MAX_MINIONS_ENRAGE    = 20;
 
     bool Enraged => hp < maxHP * 0.5f;
 
