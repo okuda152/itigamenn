@@ -5,8 +5,8 @@ using System.Collections.Generic;
 
 
 
-public enum MovementAbility { None, SpeedBoost, DoubleJump }
-public enum SpecialAbility  { None, SubspaceTackle, BulletBarrage }
+public enum MovementAbility { None, SpeedBoost, DoubleJump, CooldownReduction }
+public enum SpecialAbility  { None, SubspaceTackle, BulletBarrage, MinionSummon }
 
 public class AbilityManager : MonoBehaviour
 {
@@ -21,12 +21,27 @@ public class AbilityManager : MonoBehaviour
     float            specialCooldown = 0f;
     const float      TACKLE_CD = 10f;
     const float      BARRAGE_CD = 10f;
+    const float      SUMMON_CD = 8f;
 
-    public MovementAbility[] MoveSlots   => moveSlots;
-    public SpecialAbility    SpecialSlot => specialSlot;
+    public MovementAbility[] MoveSlots      => moveSlots;
+    public SpecialAbility    SpecialSlot    => specialSlot;
     public float             SpecialCooldown => specialCooldown;
-    public float             MaxSpecialCooldown =>
-        specialSlot == SpecialAbility.SubspaceTackle ? TACKLE_CD : BARRAGE_CD;
+    public float             MaxSpecialCooldown => CooldownFor(specialSlot);
+
+    float CooldownFor(SpecialAbility sp)
+    {
+        float baseCd = sp switch
+        {
+            SpecialAbility.SubspaceTackle => TACKLE_CD,
+            SpecialAbility.BulletBarrage  => BARRAGE_CD,
+            SpecialAbility.MinionSummon   => SUMMON_CD,
+            _                             => 10f
+        };
+        int reductions = 0;
+        foreach (var s in moveSlots)
+            if (s == MovementAbility.CooldownReduction) reductions++;
+        return Mathf.Max(1f, baseCd - reductions * 2f);
+    }
 
     void Awake()
     {
@@ -99,12 +114,13 @@ public class AbilityManager : MonoBehaviour
         {
             case SpecialAbility.SubspaceTackle: StartCoroutine(DoTackle()); break;
             case SpecialAbility.BulletBarrage:  DoBarrage();                break;
+            case SpecialAbility.MinionSummon:   DoMinionSummon();           break;
         }
     }
 
     IEnumerator DoTackle()
     {
-        specialCooldown = TACKLE_CD;
+        specialCooldown = CooldownFor(SpecialAbility.SubspaceTackle);
         var ph = GetComponent<PlayerHealth>();
         if (ph) ph.SetInvincible(0.5f);
 
@@ -136,7 +152,7 @@ public class AbilityManager : MonoBehaviour
 
     void DoBarrage()
     {
-        specialCooldown = BARRAGE_CD;
+        specialCooldown = CooldownFor(SpecialAbility.BulletBarrage);
         float dir = ctrl.FacingRight ? 1f : -1f;
         Vector2 origin = (Vector2)transform.position + new Vector2(dir * 0.4f, 0f);
         var myCol = GetComponent<Collider2D>();
@@ -149,6 +165,39 @@ public class AbilityManager : MonoBehaviour
             PlayerBullet.Spawn(origin, vel, 8f, myCol);
         }
         EffectManager.HitSpark(origin, new Color(1f, 0.85f, 0.1f));
+    }
+
+    void DoMinionSummon()
+    {
+        specialCooldown = CooldownFor(SpecialAbility.MinionSummon);
+        for (int i = 0; i < 3; i++)
+        {
+            float ox = (i - 1) * 1.0f;
+            SpawnPlayerMinion((Vector2)transform.position + new Vector2(ox, 0.3f));
+        }
+    }
+
+    void SpawnPlayerMinion(Vector2 pos)
+    {
+        var go = new GameObject("PlayerMinion");
+        go.transform.position = pos;
+
+        var mRb = go.AddComponent<Rigidbody2D>();
+        mRb.freezeRotation = true;
+        mRb.gravityScale   = 3f;
+
+        var col  = go.AddComponent<CapsuleCollider2D>();
+        col.size = new Vector2(0.4f, 0.8f);
+
+        go.AddComponent<PlayerMinion>();
+
+        var figGO = new GameObject("Figure");
+        figGO.transform.SetParent(go.transform);
+        figGO.transform.localPosition = Vector3.zero;
+        var vis = figGO.AddComponent<FantasyCharacterVisual>();
+        vis.Init("Characters/Character (44)", scale: 0.9f);
+
+        EffectManager.HitSpark(pos, new Color(0.5f, 1f, 0.4f));
     }
 
     // ---- HUD ----
@@ -168,15 +217,17 @@ public class AbilityManager : MonoBehaviour
 
     static string MoveIcon(MovementAbility a) => a switch
     {
-        MovementAbility.SpeedBoost => "UI_Skill_Icon_Buff",
-        MovementAbility.DoubleJump => "UI_Skill_Icon_Fly",
-        _                          => null
+        MovementAbility.SpeedBoost        => "UI_Skill_Icon_Buff",
+        MovementAbility.DoubleJump        => "UI_Skill_Icon_Fly",
+        MovementAbility.CooldownReduction => "UI_Skill_Icon_Blackhole",
+        _                                 => null
     };
 
     static string SpecialIcon(SpecialAbility a) => a switch
     {
         SpecialAbility.SubspaceTackle => "UI_Skill_Icon_Blackhole",
         SpecialAbility.BulletBarrage  => "UI_Skill_Icon_Arrow_Barrage",
+        SpecialAbility.MinionSummon   => "UI_Skill_Icon_Arrow_Barrage",
         _                             => null
     };
 
@@ -249,15 +300,17 @@ public class AbilityManager : MonoBehaviour
 
     public static string MoveName(MovementAbility a) => a switch
     {
-        MovementAbility.SpeedBoost => "速度強化",
-        MovementAbility.DoubleJump => "二段ジャンプ",
-        _                          => "（空）"
+        MovementAbility.SpeedBoost        => "速度強化",
+        MovementAbility.DoubleJump        => "二段ジャンプ",
+        MovementAbility.CooldownReduction => "クールタイム短縮",
+        _                                 => "（空）"
     };
 
     public static string SpecialName(SpecialAbility a) => a switch
     {
         SpecialAbility.SubspaceTackle => "亜空間タックル",
         SpecialAbility.BulletBarrage  => "弾幕攻撃",
+        SpecialAbility.MinionSummon   => "雑魚召喚",
         _                             => "（空）"
     };
 }

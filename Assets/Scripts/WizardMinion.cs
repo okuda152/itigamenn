@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class WizardMinion : MonoBehaviour, IDamageable
 {
-    public float maxHP = 30f;
+    public float maxHP = 1f;
 
     float hp;
     bool  dead = false;

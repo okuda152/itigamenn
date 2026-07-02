@@ -85,11 +85,11 @@ public class WizardBoss : MonoBehaviour, IDamageable
 
         go.AddComponent<WizardMinion>();
 
-        var sr = go.AddComponent<SpriteRenderer>();
-        sr.sprite       = PixelSprite();
-        sr.color        = new Color(0.55f, 0.15f, 0.85f);
-        sr.sortingOrder = 1;
-        go.transform.localScale = new Vector3(0.4f, 0.8f, 1f);
+        var figGO = new GameObject("Figure");
+        figGO.transform.SetParent(go.transform);
+        figGO.transform.localPosition = Vector3.zero;
+        var vis = figGO.AddComponent<FantasyCharacterVisual>();
+        vis.Init("Characters/Character (44)", scale: 0.9f);
 
         EffectManager.HitSpark((Vector2)go.transform.position, new Color(0.6f, 0.2f, 0.9f));
     }
@@ -135,11 +135,4 @@ public class WizardBoss : MonoBehaviour, IDamageable
         GUI.color = Color.white;
     }
 
-    static Sprite PixelSprite()
-    {
-        var tex = new Texture2D(1, 1);
-        tex.SetPixel(0, 0, Color.white);
-        tex.Apply();
-        return Sprite.Create(tex, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f), 1f);
-    }
 }

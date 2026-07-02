@@ -19,7 +19,7 @@ public class BossManager : MonoBehaviour
         ButterflyBoss.OnDied += OnButterflyDied;
         WizardBoss.OnDied    += OnWizardDied;
         SandbagBoss.OnDied   += OnSandbagDied;
-        SpawnButterflyBoss();
+        SpawnWizardBoss();
     }
 
     void OnDestroy()
@@ -32,9 +32,9 @@ public class BossManager : MonoBehaviour
 
     // ---- Event handlers ----
 
-    void OnButterflyDied() => ShowAbilitySelect(ButterflyOffers(), () => StartCoroutine(Transition(SpawnDinoBoss,    "N E X T  B O S S")));
-    void OnDinoDied()      => ShowAbilitySelect(DinoOffers(),      () => StartCoroutine(Transition(SpawnWizardBoss,  "N E X T  B O S S")));
-    void OnWizardDied()    => ShowAbilitySelect(WizardOffers(),    () => StartCoroutine(Transition(SpawnSandbagBoss, "N E X T  B O S S")));
+    void OnWizardDied()    => ShowAbilitySelect(WizardOffers(),    () => StartCoroutine(Transition(SpawnButterflyBoss, "N E X T  B O S S")));
+    void OnButterflyDied() => ShowAbilitySelect(ButterflyOffers(), () => StartCoroutine(Transition(SpawnDinoBoss,     "N E X T  B O S S")));
+    void OnDinoDied()      => ShowAbilitySelect(DinoOffers(),      () => StartCoroutine(Transition(SpawnSandbagBoss,  "N E X T  B O S S")));
     void OnSandbagDied()   => StartCoroutine(ClearSequence());
 
     void ShowAbilitySelect(AbilitySelectUI.AbilityOffer[] offers, System.Action callback)
@@ -91,19 +91,19 @@ public class BossManager : MonoBehaviour
     {
         new AbilitySelectUI.AbilityOffer
         {
-            name       = "移動速度強化",
-            iconName   = "UI_Skill_Icon_Buff",
+            name       = "クールタイム短縮",
+            iconName   = "UI_Skill_Icon_Blackhole",
             isMovement = true,
-            movement   = MovementAbility.SpeedBoost,
-            color      = new Color(1f, 0.5f, 0.1f)
+            movement   = MovementAbility.CooldownReduction,
+            color      = new Color(0.2f, 0.9f, 0.8f)
         },
         new AbilitySelectUI.AbilityOffer
         {
-            name       = "二段ジャンプ",
-            iconName   = "UI_Skill_Icon_Fly",
-            isMovement = true,
-            movement   = MovementAbility.DoubleJump,
-            color      = new Color(0.2f, 0.8f, 1f)
+            name       = "雑魚召喚",
+            iconName   = "UI_Skill_Icon_Arrow_Barrage",
+            isMovement = false,
+            special    = SpecialAbility.MinionSummon,
+            color      = new Color(0.55f, 0.15f, 0.9f)
         }
     };
 
@@ -210,7 +210,7 @@ public class BossManager : MonoBehaviour
         figGO.transform.SetParent(boss.transform);
         figGO.transform.localPosition = new Vector3(0f, 0.1f, 0f);
         var vis = figGO.AddComponent<FantasyCharacterVisual>();
-        vis.Init("Characters/Character (36)", scale: 1.6f);
+        vis.Init("Characters/Character (92)", scale: 1.6f);
     }
 
     void SpawnSandbagBoss()
