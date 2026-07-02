@@ -8,27 +8,53 @@ public class WizardMinion : MonoBehaviour, IDamageable
     bool  dead = false;
     Rigidbody2D rb;
 
-    const float MOVE_SPEED      = 3.5f;
-    const float CONTACT_DAMAGE  = 8f;
-    const float CONTACT_CD      = 0.8f;
+    const float HOP_SPEED      = 2.2f;
+    const float HOP_DURATION   = 0.28f;
+    const float PAUSE_DURATION = 0.45f;
+    const float CONTACT_DAMAGE = 8f;
+    const float CONTACT_CD     = 0.8f;
+
     float contactTimer = 0f;
+    float stateTimer   = 0f;
+    bool  hopping      = false;
+    float hopDir       = 1f;
 
     void Awake()
     {
         hp = maxHP;
         rb = GetComponent<Rigidbody2D>();
+        stateTimer = Random.Range(0f, 0.3f);  // 生成タイミングをずらす
     }
 
     void Update()
     {
         if (dead) return;
         contactTimer -= Time.deltaTime;
+        stateTimer   -= Time.deltaTime;
 
         var player = GameObject.FindWithTag("Player");
-        if (player == null) return;
 
-        float dir = Mathf.Sign(player.transform.position.x - transform.position.x);
-        rb.linearVelocity = new Vector2(dir * MOVE_SPEED, rb.linearVelocity.y);
+        if (stateTimer <= 0f)
+        {
+            hopping = !hopping;
+            if (hopping)
+            {
+                // プレイヤー方向を決定してジャンプ
+                if (player != null)
+                    hopDir = Mathf.Sign(player.transform.position.x - transform.position.x);
+                rb.linearVelocity = new Vector2(hopDir * HOP_SPEED, 3.5f);
+                stateTimer = HOP_DURATION;
+            }
+            else
+            {
+                rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
+                stateTimer = PAUSE_DURATION;
+            }
+        }
+        else if (!hopping)
+        {
+            rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
+        }
     }
 
     void OnCollisionStay2D(Collision2D col)
