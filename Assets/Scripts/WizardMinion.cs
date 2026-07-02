@@ -23,7 +23,7 @@ public class WizardMinion : MonoBehaviour, IDamageable
     const float DETECT_RANGE     = 1.6f;
     const float PREPARE_TIME     = 1.4f;
     const float EXPLOSION_RADIUS = 2.2f;
-    const float EXPLOSION_DAMAGE = 20f;
+    const float EXPLOSION_DAMAGE = 8f;
     float prepareTimer  = 0f;
     float blinkTimer    = 0f;
     bool  blinkOn       = false;

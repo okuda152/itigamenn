@@ -70,7 +70,7 @@ public class WizardBoss : MonoBehaviour, IDamageable
         moveTimer = MOVE_INTERVAL;
         targetPos = new Vector2(
             UnityEngine.Random.Range(-arenaHalfW * 0.65f, arenaHalfW * 0.65f),
-            UnityEngine.Random.Range(0.5f, arenaHalfH * 0.6f)
+            UnityEngine.Random.Range(-0.5f, arenaHalfH * 0.2f)
         );
     }
 
