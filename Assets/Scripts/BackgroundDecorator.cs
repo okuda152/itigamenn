@@ -31,20 +31,6 @@ public class BackgroundDecorator : MonoBehaviour
                         new Vector3(tileStartX + i, rowCenterY, 0f), order: 2);
         }
 
-        // ---- 石 ----
-        PlaceGrounded("Stone1", -hw + 2.2f, groundY, scale: 0.8f, order: 3);
-        PlaceGrounded("Stone3", -hw + 5.0f, groundY, scale: 0.6f, order: 3);
-        PlaceGrounded("Stone2",  hw - 2.2f, groundY, scale: 0.8f, order: 3, flipX: true);
-        PlaceGrounded("Stone4",  hw - 5.0f, groundY, scale: 0.6f, order: 3);
-        PlaceGrounded("Stone5",  1.5f,      groundY, scale: 0.5f, order: 3);
-
-        // ---- 草・植物 ----
-        PlaceGrounded("Plant2", -hw + 1.2f, groundY, scale: 0.7f,  order: 4);
-        PlaceGrounded("Plant4", -hw + 4.0f, groundY, scale: 0.65f, order: 4);
-        PlaceGrounded("Plant1", -2.5f,      groundY, scale: 0.6f,  order: 4);
-        PlaceGrounded("Plant3",  hw - 1.2f, groundY, scale: 0.7f,  order: 4, flipX: true);
-        PlaceGrounded("Plant5",  hw - 4.0f, groundY, scale: 0.65f, order: 4, flipX: true);
-        PlaceGrounded("Plant2",  3.0f,      groundY, scale: 0.55f, order: 4, flipX: true);
     }
 
     // 指定の中心座標に配置
