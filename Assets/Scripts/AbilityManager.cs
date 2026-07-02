@@ -170,10 +170,18 @@ public class AbilityManager : MonoBehaviour
     void DoMinionSummon()
     {
         specialCooldown = CooldownFor(SpecialAbility.MinionSummon);
-        for (int i = 0; i < 3; i++)
+        StartCoroutine(MinionSummonCo());
+    }
+
+    IEnumerator MinionSummonCo()
+    {
+        float elapsed = 0f;
+        while (elapsed < 3f)
         {
-            float ox = (i - 1) * 1.0f;
+            float ox = Random.Range(-1.5f, 1.5f);
             SpawnPlayerMinion((Vector2)transform.position + new Vector2(ox, 0.3f));
+            elapsed += 0.4f;
+            yield return new WaitForSeconds(0.4f);
         }
     }
 

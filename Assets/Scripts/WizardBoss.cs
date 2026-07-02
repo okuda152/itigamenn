@@ -20,12 +20,19 @@ public class WizardBoss : MonoBehaviour, IDamageable
 
     const float MOVE_SPEED            = 2.5f;
     const float MOVE_INTERVAL         = 2.2f;
-    const float SUMMON_INTERVAL       = 2.5f;
-    const float SUMMON_INTERVAL_ENRAGE = 0.4f;
-    const int   MAX_MINIONS           = 6;
-    const int   MAX_MINIONS_ENRAGE    = 20;
+    const float SUMMON_INTERVAL         = 2.5f;
+    const float SUMMON_INTERVAL_PHASE2  = 1.0f;
+    const float SUMMON_INTERVAL_PHASE3  = 0.4f;
+    const int   MAX_MINIONS             = 6;
+    const int   MAX_MINIONS_PHASE2      = 10;
+    const int   MAX_MINIONS_PHASE3      = 20;
 
-    bool Enraged => hp < maxHP / 3f;
+    float SummonInterval => hp < maxHP / 3f ? SUMMON_INTERVAL_PHASE3
+                          : hp < maxHP / 2f ? SUMMON_INTERVAL_PHASE2
+                          : SUMMON_INTERVAL;
+    int   MinionCap      => hp < maxHP / 3f ? MAX_MINIONS_PHASE3
+                          : hp < maxHP / 2f ? MAX_MINIONS_PHASE2
+                          : MAX_MINIONS;
 
     void Awake()
     {
@@ -52,9 +59,8 @@ public class WizardBoss : MonoBehaviour, IDamageable
         summonTimer -= Time.deltaTime;
         if (summonTimer <= 0f)
         {
-            summonTimer = Enraged ? SUMMON_INTERVAL_ENRAGE : SUMMON_INTERVAL;
-            int cap = Enraged ? MAX_MINIONS_ENRAGE : MAX_MINIONS;
-            if (MinionCount() < cap)
+            summonTimer = SummonInterval;
+            if (MinionCount() < MinionCap)
                 SummonMinion();
         }
     }
