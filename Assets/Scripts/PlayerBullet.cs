@@ -43,7 +43,7 @@ public class PlayerBullet : MonoBehaviour
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other == ignore) return;
-        var dmg = other.GetComponent<IDamageable>();
+        var dmg = other.GetComponentInParent<IDamageable>();
         if (dmg != null)
         {
             var rb  = GetComponent<Rigidbody2D>();
