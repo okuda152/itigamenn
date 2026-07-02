@@ -17,6 +17,7 @@ public class BossManager : MonoBehaviour
     {
         BossDummy.OnDied     += OnDinoDied;
         ButterflyBoss.OnDied += OnButterflyDied;
+        WizardBoss.OnDied    += OnWizardDied;
         SandbagBoss.OnDied   += OnSandbagDied;
         SpawnButterflyBoss();
     }
@@ -25,13 +26,15 @@ public class BossManager : MonoBehaviour
     {
         BossDummy.OnDied     -= OnDinoDied;
         ButterflyBoss.OnDied -= OnButterflyDied;
+        WizardBoss.OnDied    -= OnWizardDied;
         SandbagBoss.OnDied   -= OnSandbagDied;
     }
 
     // ---- Event handlers ----
 
-    void OnDinoDied()      => ShowAbilitySelect(DinoOffers(),      () => StartCoroutine(Transition(SpawnSandbagBoss, "N E X T  B O S S")));
-    void OnButterflyDied() => ShowAbilitySelect(ButterflyOffers(), () => StartCoroutine(Transition(SpawnDinoBoss,     "N E X T  B O S S")));
+    void OnButterflyDied() => ShowAbilitySelect(ButterflyOffers(), () => StartCoroutine(Transition(SpawnDinoBoss,    "N E X T  B O S S")));
+    void OnDinoDied()      => ShowAbilitySelect(DinoOffers(),      () => StartCoroutine(Transition(SpawnWizardBoss,  "N E X T  B O S S")));
+    void OnWizardDied()    => ShowAbilitySelect(WizardOffers(),    () => StartCoroutine(Transition(SpawnSandbagBoss, "N E X T  B O S S")));
     void OnSandbagDied()   => StartCoroutine(ClearSequence());
 
     void ShowAbilitySelect(AbilitySelectUI.AbilityOffer[] offers, System.Action callback)
@@ -81,6 +84,26 @@ public class BossManager : MonoBehaviour
             isMovement = false,
             special    = SpecialAbility.BulletBarrage,
             color      = new Color(0.2f, 1f, 0.4f)
+        }
+    };
+
+    AbilitySelectUI.AbilityOffer[] WizardOffers() => new[]
+    {
+        new AbilitySelectUI.AbilityOffer
+        {
+            name       = "移動速度強化",
+            iconName   = "UI_Skill_Icon_Buff",
+            isMovement = true,
+            movement   = MovementAbility.SpeedBoost,
+            color      = new Color(1f, 0.5f, 0.1f)
+        },
+        new AbilitySelectUI.AbilityOffer
+        {
+            name       = "二段ジャンプ",
+            iconName   = "UI_Skill_Icon_Fly",
+            isMovement = true,
+            movement   = MovementAbility.DoubleJump,
+            color      = new Color(0.2f, 0.8f, 1f)
         }
     };
 
@@ -165,6 +188,29 @@ public class BossManager : MonoBehaviour
         figGO.transform.localPosition = new Vector3(0f, 0.1f, 0f);
         var vis = figGO.AddComponent<FantasyCharacterVisual>();
         vis.Init("Characters/Character (71)", scale: 1.5f);
+    }
+
+    void SpawnWizardBoss()
+    {
+        var boss = new GameObject("WizardBoss");
+        boss.transform.position = new Vector3(0f, arenaHeight * 0.2f, 0f);
+
+        var rb = boss.AddComponent<Rigidbody2D>();
+        rb.freezeRotation = true;
+        rb.gravityScale   = 0f;
+
+        var col  = boss.AddComponent<CapsuleCollider2D>();
+        col.size = new Vector2(1.0f, 1.6f);
+
+        var wb        = boss.AddComponent<WizardBoss>();
+        wb.arenaHalfW = arenaWidth  * 0.5f - 1.5f;
+        wb.arenaHalfH = arenaHeight * 0.5f - 1.0f;
+
+        var figGO = new GameObject("WizardFigure");
+        figGO.transform.SetParent(boss.transform);
+        figGO.transform.localPosition = new Vector3(0f, 0.1f, 0f);
+        var vis = figGO.AddComponent<FantasyCharacterVisual>();
+        vis.Init("Characters/Character (36)", scale: 1.6f);
     }
 
     void SpawnSandbagBoss()
