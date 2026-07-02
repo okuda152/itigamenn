@@ -25,7 +25,7 @@ public class WizardBoss : MonoBehaviour, IDamageable
     const int   MAX_MINIONS           = 6;
     const int   MAX_MINIONS_ENRAGE    = 20;
 
-    bool Enraged => hp < maxHP * 0.5f;
+    bool Enraged => hp < maxHP / 3f;
 
     void Awake()
     {
