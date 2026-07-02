@@ -64,9 +64,9 @@ public class Bullet : MonoBehaviour
         var ph = other.GetComponent<PlayerHealth>();
         if (ph != null) { ph.TakeDamage(damage); Destroy(gameObject); return; }
 
-        // プレイヤーの雑魚にダメージ
+        // プレイヤーの雑魚にダメージ（弾は貫通）
         var pm = other.GetComponentInParent<PlayerMinion>();
-        if (pm != null) { pm.TakeDamage(damage, Vector2.zero); Destroy(gameObject); return; }
+        if (pm != null) { pm.TakeDamage(damage, Vector2.zero); return; }
 
         // ボス・IDamageable はスルー（ボス自身に当たらないように）
         if (other.GetComponentInParent<IDamageable>() != null) return;

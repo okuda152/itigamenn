@@ -34,6 +34,16 @@ public class PlayerMinion : MonoBehaviour, IDamageable
     void Start()
     {
         visual = GetComponentInChildren<FantasyCharacterVisual>();
+
+        // ボス・敵雑魚とは物理衝突しない（攻撃は貫通させる）
+        var myCol = GetComponent<Collider2D>();
+        if (myCol == null) return;
+        foreach (var col in FindObjectsByType<Collider2D>(FindObjectsSortMode.None))
+        {
+            if (col.gameObject == gameObject) continue;
+            if (col.GetComponentInParent<IDamageable>() != null)
+                Physics2D.IgnoreCollision(myCol, col);
+        }
     }
 
     void Update()
