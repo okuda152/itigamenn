@@ -193,7 +193,7 @@ public class AbilityManager : MonoBehaviour
 
         var figGO = new GameObject("Figure");
         figGO.transform.SetParent(go.transform);
-        figGO.transform.localPosition = new Vector3(0f, 0.1f, 0f);
+        figGO.transform.localPosition = new Vector3(0f, -0.15f, 0f);
         var vis = figGO.AddComponent<FantasyCharacterVisual>();
         vis.Init("Characters/Character (44)", scale: 0.9f);
 

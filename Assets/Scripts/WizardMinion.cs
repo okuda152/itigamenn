@@ -8,9 +8,9 @@ public class WizardMinion : MonoBehaviour, IDamageable
     bool  dead = false;
     Rigidbody2D rb;
 
-    const float HOP_SPEED      = 2.2f;
+    const float HOP_SPEED      = 4.5f;
     const float HOP_DURATION   = 0.28f;
-    const float PAUSE_DURATION = 0.45f;
+    const float PAUSE_DURATION = 0.28f;
     const float CONTACT_DAMAGE = 8f;
     const float CONTACT_CD     = 0.8f;
 
