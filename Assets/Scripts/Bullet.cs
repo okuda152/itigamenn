@@ -58,12 +58,20 @@ public class Bullet : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.GetComponent<Bullet>()      != null) return;
-        if (other.GetComponent<IDamageable>() != null) return;  // boss — pass through
+        if (other.GetComponent<Bullet>() != null) return;
 
+        // プレイヤーにダメージ
         var ph = other.GetComponent<PlayerHealth>();
-        if (ph != null) ph.TakeDamage(damage);
+        if (ph != null) { ph.TakeDamage(damage); Destroy(gameObject); return; }
 
-        Destroy(gameObject);
+        // プレイヤーの雑魚にダメージ
+        var pm = other.GetComponentInParent<PlayerMinion>();
+        if (pm != null) { pm.TakeDamage(damage, Vector2.zero); Destroy(gameObject); return; }
+
+        // ボス・IDamageable はスルー（ボス自身に当たらないように）
+        if (other.GetComponentInParent<IDamageable>() != null) return;
+
+        // 壁などで消える
+        if (!other.isTrigger) Destroy(gameObject);
     }
 }
