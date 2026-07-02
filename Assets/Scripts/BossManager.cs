@@ -32,9 +32,9 @@ public class BossManager : MonoBehaviour
 
     // ---- Event handlers ----
 
-    void OnWizardDied()    => ShowAbilitySelect(WizardOffers(),    () => StartCoroutine(Transition(SpawnButterflyBoss, "N E X T  B O S S")));
-    void OnButterflyDied() => ShowAbilitySelect(ButterflyOffers(), () => StartCoroutine(Transition(SpawnDinoBoss,     "N E X T  B O S S")));
-    void OnDinoDied()      => ShowAbilitySelect(DinoOffers(),      () => StartCoroutine(Transition(SpawnSandbagBoss,  "N E X T  B O S S")));
+    void OnWizardDied()    => ShowAbilitySelect(WizardOffers(),    () => StartCoroutine(Transition(SpawnDinoBoss,      "N E X T  B O S S")));
+    void OnDinoDied()      => ShowAbilitySelect(DinoOffers(),      () => StartCoroutine(Transition(SpawnButterflyBoss, "N E X T  B O S S")));
+    void OnButterflyDied() => ShowAbilitySelect(ButterflyOffers(), () => StartCoroutine(Transition(SpawnSandbagBoss,  "N E X T  B O S S")));
     void OnSandbagDied()   => StartCoroutine(ClearSequence());
 
     void ShowAbilitySelect(AbilitySelectUI.AbilityOffer[] offers, System.Action callback)

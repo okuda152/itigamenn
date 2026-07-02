@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PlayerMinion : MonoBehaviour
+public class PlayerMinion : MonoBehaviour, IDamageable
 {
     enum State { Hopping, Preparing, Dead }
 
@@ -116,14 +116,22 @@ public class PlayerMinion : MonoBehaviour
         Destroy(gameObject);
     }
 
+    public void TakeDamage(float amount, Vector2 knockback)
+    {
+        if (state == State.Dead) return;
+        state = State.Dead;
+        EffectManager.DeathBurst(transform.position, new Color(0.3f, 1f, 0.3f));
+        Destroy(gameObject);
+    }
+
     Transform FindTarget()
     {
         float best = float.MaxValue;
         Transform found = null;
         foreach (var dmg in FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None))
         {
-            if (dmg is not IDamageable)                                  continue;
-            if (dmg is PlayerHealth or WizardMinion or PlayerMinion)     continue;
+            if (dmg is not IDamageable)                              continue;
+            if (dmg is PlayerHealth or WizardMinion or PlayerMinion) continue;
             float d = Vector2.Distance(transform.position, dmg.transform.position);
             if (d < best) { best = d; found = dmg.transform; }
         }
