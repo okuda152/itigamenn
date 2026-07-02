@@ -2,13 +2,13 @@ using UnityEngine;
 
 public class PlayerBullet : MonoBehaviour
 {
-    float      damage;
-    float      lifeTime = 1.8f;
-    Collider2D ignore;
+    float       damage;
+    float       lifeTime = 1.8f;
+    Collider2D  ignore;
     Rigidbody2D rb;
-    Vector2    prevPos;
+    Vector2     prevPos;
 
-    public static PlayerBullet Spawn(Vector2 pos, Vector2 vel, float dmg, Collider2D ignore)
+    public static void Spawn(Vector2 pos, Vector2 vel, float dmg, Collider2D ignore)
     {
         var go = new GameObject("PlayerBullet");
         go.transform.position   = pos;
@@ -27,32 +27,25 @@ public class PlayerBullet : MonoBehaviour
         rb.linearVelocity = vel;
         rb.freezeRotation = true;
 
-        // トリガーコライダーは視覚的なもの（当たり判定はスイープで行う）
-        var col       = go.AddComponent<CircleCollider2D>();
-        col.radius    = 0.5f;
-        col.isTrigger = true;
-
         var b     = go.AddComponent<PlayerBullet>();
         b.damage  = dmg;
         b.ignore  = ignore;
         b.rb      = rb;
         b.prevPos = pos;
-        return b;
     }
 
-    void Update()
+    void FixedUpdate()
     {
-        lifeTime -= Time.deltaTime;
+        lifeTime -= Time.fixedDeltaTime;
         if (lifeTime <= 0f) { Destroy(gameObject); return; }
 
-        Vector2 curPos = transform.position;
+        Vector2 curPos = rb.position;
         Vector2 dir    = curPos - prevPos;
         float   dist   = dir.magnitude;
 
         if (dist > 0.001f)
         {
-            // 前フレーム位置→今フレーム位置をスイープして判定
-            foreach (var hit in Physics2D.CircleCastAll(prevPos, 0.15f, dir.normalized, dist))
+            foreach (var hit in Physics2D.CircleCastAll(prevPos, 0.25f, dir.normalized, dist))
             {
                 if (hit.collider == ignore) continue;
 
