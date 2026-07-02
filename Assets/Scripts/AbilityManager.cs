@@ -176,7 +176,7 @@ public class AbilityManager : MonoBehaviour
     IEnumerator MinionSummonCo()
     {
         float elapsed = 0f;
-        while (elapsed < 3f)
+        while (elapsed < 2f)
         {
             float ox = Random.Range(-1.5f, 1.5f);
             SpawnPlayerMinion((Vector2)transform.position + new Vector2(ox, 0.3f));
