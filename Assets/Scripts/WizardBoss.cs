@@ -87,7 +87,7 @@ public class WizardBoss : MonoBehaviour, IDamageable
 
         var figGO = new GameObject("Figure");
         figGO.transform.SetParent(go.transform);
-        figGO.transform.localPosition = Vector3.zero;
+        figGO.transform.localPosition = new Vector3(0f, -0.4f, 0f);
         var vis = figGO.AddComponent<FantasyCharacterVisual>();
         vis.Init("Characters/Character (44)", scale: 0.9f);
 
@@ -118,20 +118,39 @@ public class WizardBoss : MonoBehaviour, IDamageable
     void OnGUI()
     {
         if (dead) return;
-        var cam = Camera.main;
-        if (cam == null) return;
 
-        Vector3 screen = cam.WorldToScreenPoint(transform.position + Vector3.up * 1.4f);
-        if (screen.z < 0f) return;
+        float sw = Screen.width;
+        const float panelW = 400f, panelH = 52f;
+        float panelX = (sw - panelW) * 0.5f;
+        const float panelY = 12f;
 
-        float barW = 100f, barH = 10f;
-        float x = screen.x - barW * 0.5f;
-        float y = Screen.height - screen.y - barH * 0.5f;
+        GUI.color = new Color(0f, 0f, 0f, 0.55f);
+        GUI.DrawTexture(new Rect(panelX, panelY, panelW, panelH), Texture2D.whiteTexture);
 
-        GUI.color = new Color(0f, 0f, 0f, 0.6f);
-        GUI.DrawTexture(new Rect(x - 1, y - 1, barW + 2, barH + 2), Texture2D.whiteTexture);
+        var labelStyle = new GUIStyle(GUI.skin.label)
+        {
+            alignment = TextAnchor.MiddleCenter,
+            fontStyle  = FontStyle.Bold,
+            fontSize   = 13,
+            normal     = { textColor = new Color(0.85f, 0.85f, 1f) }
+        };
+        GUI.color = Color.white;
+        GUI.Label(new Rect(panelX, panelY + 4f, panelW, 18f), "B O S S", labelStyle);
+
+        const float barW = 360f, barH = 14f;
+        float barX = (sw - barW) * 0.5f;
+        const float barY = panelY + 26f;
+
+        GUI.color = new Color(0.15f, 0.05f, 0.35f);
+        GUI.DrawTexture(new Rect(barX, barY, barW, barH), Texture2D.whiteTexture);
         GUI.color = new Color(0.5f, 0.1f, 1f);
-        GUI.DrawTexture(new Rect(x, y, barW * (hp / maxHP), barH), Texture2D.whiteTexture);
+        GUI.DrawTexture(new Rect(barX, barY, barW * (hp / maxHP), barH), Texture2D.whiteTexture);
+
+        GUI.color = new Color(1f, 1f, 1f, 0.25f);
+        GUI.DrawTexture(new Rect(barX - 1,    barY - 1,    barW + 2, 1),        Texture2D.whiteTexture);
+        GUI.DrawTexture(new Rect(barX - 1,    barY + barH, barW + 2, 1),        Texture2D.whiteTexture);
+        GUI.DrawTexture(new Rect(barX - 1,    barY - 1,    1,        barH + 2), Texture2D.whiteTexture);
+        GUI.DrawTexture(new Rect(barX + barW, barY - 1,    1,        barH + 2), Texture2D.whiteTexture);
         GUI.color = Color.white;
     }
 

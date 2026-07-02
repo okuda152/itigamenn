@@ -19,19 +19,11 @@ public class BackgroundDecorator : MonoBehaviour
         float hh      = arenaHeight * 0.5f;
         float groundY = -hh + 0.75f;  // 床壁の上端 = プレイヤーが立つ面
 
-        // ---- 地面タイル ----
-        // 1x1 ワールド単位のタイルを「上端が groundY」になるよう配置
-        // → center = groundY - 0.5
-        int   tileCount  = Mathf.CeilToInt(arenaWidth) + 24;  // 左右に余裕を持って延長
+        // ---- 地面タイル（土のみ） ----
+        int   tileCount  = Mathf.CeilToInt(arenaWidth) + 24;
         float tileStartX = -hw - 12f;
 
-        // 草（上段）: 1種類で統一
-        for (int i = 0; i < tileCount; i++)
-            PlaceAt("TileGround2",
-                    new Vector3(tileStartX + i, groundY - 0.5f, 0f), order: 2);
-
-        // 土（下段 × 2行）: 1種類で統一
-        for (int row = 1; row <= 2; row++)
+        for (int row = 0; row <= 2; row++)
         {
             float rowCenterY = groundY - 0.5f - row;
             for (int i = 0; i < tileCount; i++)
