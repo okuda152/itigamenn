@@ -110,6 +110,14 @@ public class BossDummy : MonoBehaviour, IDamageable
             }
         }
 
+        // 突進中に PlayerMinion を薙ぎ倒す
+        foreach (var pm in FindObjectsByType<PlayerMinion>(FindObjectsSortMode.None))
+        {
+            float dist = Mathf.Abs(transform.position.x - pm.transform.position.x);
+            if (dist < 1.2f)
+                pm.TakeDamage(999f, Vector2.zero);
+        }
+
         if (stateTimer <= 0f) EnterCooldown();
     }
 
