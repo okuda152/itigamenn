@@ -225,17 +225,17 @@ public class AbilityManager : MonoBehaviour
 
     static string MoveIcon(MovementAbility a) => a switch
     {
-        MovementAbility.SpeedBoost        => "UI_Skill_Icon_Buff",
-        MovementAbility.DoubleJump        => "UI_Skill_Icon_Fly",
-        MovementAbility.CooldownReduction => "UI_Skill_Icon_Blackhole",
+        MovementAbility.SpeedBoost        => "skill_001",
+        MovementAbility.DoubleJump        => "skill_050",
+        MovementAbility.CooldownReduction => "skill_100",
         _                                 => null
     };
 
     static string SpecialIcon(SpecialAbility a) => a switch
     {
-        SpecialAbility.SubspaceTackle => "UI_Skill_Icon_Blackhole",
-        SpecialAbility.BulletBarrage  => "UI_Skill_Icon_Arrow_Barrage",
-        SpecialAbility.MinionSummon   => "UI_Skill_Icon_Arrow_Barrage",
+        SpecialAbility.SubspaceTackle => "skill_150",
+        SpecialAbility.BulletBarrage  => "skill_200",
+        SpecialAbility.MinionSummon   => "skill_250",
         _                             => null
     };
 

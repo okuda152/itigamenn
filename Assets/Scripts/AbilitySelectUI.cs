@@ -214,8 +214,9 @@ public class AbilitySelectUI : MonoBehaviour
 
     static string MoveIcon(MovementAbility a) => a switch
     {
-        MovementAbility.SpeedBoost => "UI_Skill_Icon_Buff",
-        MovementAbility.DoubleJump => "UI_Skill_Icon_Fly",
-        _                          => null
+        MovementAbility.SpeedBoost        => "skill_001",
+        MovementAbility.DoubleJump        => "skill_050",
+        MovementAbility.CooldownReduction => "skill_100",
+        _                                 => null
     };
 }

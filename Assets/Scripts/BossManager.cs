@@ -52,7 +52,7 @@ public class BossManager : MonoBehaviour
         new AbilitySelectUI.AbilityOffer
         {
             name       = "移動速度強化",
-            iconName   = "UI_Skill_Icon_Buff",
+            iconName   = "skill_001",
             isMovement = true,
             movement   = MovementAbility.SpeedBoost,
             color      = new Color(1f, 0.5f, 0.1f)
@@ -60,7 +60,7 @@ public class BossManager : MonoBehaviour
         new AbilitySelectUI.AbilityOffer
         {
             name       = "亜空間タックル",
-            iconName   = "UI_Skill_Icon_Blackhole",
+            iconName   = "skill_150",
             isMovement = false,
             special    = SpecialAbility.SubspaceTackle,
             color      = new Color(0.5f, 0.1f, 1f)
@@ -72,7 +72,7 @@ public class BossManager : MonoBehaviour
         new AbilitySelectUI.AbilityOffer
         {
             name       = "二段ジャンプ",
-            iconName   = "UI_Skill_Icon_Fly",
+            iconName   = "skill_050",
             isMovement = true,
             movement   = MovementAbility.DoubleJump,
             color      = new Color(0.2f, 0.8f, 1f)
@@ -80,7 +80,7 @@ public class BossManager : MonoBehaviour
         new AbilitySelectUI.AbilityOffer
         {
             name       = "弾幕攻撃",
-            iconName   = "UI_Skill_Icon_Arrow_Barrage",
+            iconName   = "skill_200",
             isMovement = false,
             special    = SpecialAbility.BulletBarrage,
             color      = new Color(0.2f, 1f, 0.4f)
@@ -92,7 +92,7 @@ public class BossManager : MonoBehaviour
         new AbilitySelectUI.AbilityOffer
         {
             name       = "クールタイム短縮",
-            iconName   = "UI_Skill_Icon_Blackhole",
+            iconName   = "skill_100",
             isMovement = true,
             movement   = MovementAbility.CooldownReduction,
             color      = new Color(0.2f, 0.9f, 0.8f)
@@ -100,7 +100,7 @@ public class BossManager : MonoBehaviour
         new AbilitySelectUI.AbilityOffer
         {
             name       = "雑魚召喚",
-            iconName   = "UI_Skill_Icon_Arrow_Barrage",
+            iconName   = "skill_250",
             isMovement = false,
             special    = SpecialAbility.MinionSummon,
             color      = new Color(0.55f, 0.15f, 0.9f)
