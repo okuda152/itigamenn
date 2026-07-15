@@ -199,8 +199,9 @@ public class BossManager : MonoBehaviour
         rb.freezeRotation = true;
         rb.gravityScale   = 0f;
 
-        var col  = boss.AddComponent<CapsuleCollider2D>();
-        col.size = new Vector2(1.0f, 1.6f);
+        var col    = boss.AddComponent<CapsuleCollider2D>();
+        col.size   = new Vector2(1.0f, 2.0f);
+        col.offset = new Vector2(0f, 0.6f);
 
         var wb        = boss.AddComponent<WizardBoss>();
         wb.arenaHalfW = arenaWidth  * 0.5f - 1.5f;
