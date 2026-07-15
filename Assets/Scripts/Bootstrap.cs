@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 /// <summary>
 /// シーンに何もなくてもプレイボタンを押すだけでゲームが起動します。
@@ -8,6 +9,11 @@ public static class Bootstrap
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     static void Init()
     {
+        // OnGUI + New Input System のみ使用。uGUI EventSystem は不要で
+        // StandaloneInputModule が旧 UnityEngine.Input を呼んでエラーになるため消す。
+        var es = Object.FindFirstObjectByType<EventSystem>();
+        if (es != null) Object.Destroy(es.gameObject);
+
         // EffectManager は常に起動
         if (Object.FindFirstObjectByType<EffectManager>() == null)
         {
